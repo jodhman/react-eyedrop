@@ -3,11 +3,6 @@ import { shallow, mount } from 'enzyme'
 import App from '../src'
 import rgbToHex from '../src/rgbToHex'
 
-/**
- * passThrough
- * buttonComponent
- */
-
 describe('React-EyeDrop should', () => {
   it('render', () => {
     const wrapper = shallow(<App />)
@@ -27,7 +22,7 @@ describe('React-EyeDrop should', () => {
 
   it('use custom button component when given', () => {
     const customButton = () => <div className='custom-btn' style={{backgroundColor: 'red'}}>OMEGA BUTTON</div>
-    const wrapper = shallow(<App buttonComponent={customButton} />)
+    const wrapper = shallow(<App customComponent={customButton} />)
     expect(wrapper.children().html()).toEqual("<div class=\"custom-btn\" style=\"background-color:red\">OMEGA BUTTON</div>")
   })
 
@@ -35,7 +30,7 @@ describe('React-EyeDrop should', () => {
     const customButton = ({ colorObject: { rgb } }) => (
       <div className='custom-btn' style={{backgroundColor: rgb ? rgb : 'red'}}>OMEGA BUTTON</div>
     )
-    const wrapper = shallow(<App onChange={() => {}} buttonComponent={customButton} passThrough={'colorObject'} />)
+    const wrapper = shallow(<App onChange={() => {}} customComponent={customButton} passThrough={'colorObject'} />)
     expect(wrapper.children().html()).toEqual("<div class=\"custom-btn\" style=\"background-color:red\">OMEGA BUTTON</div>")
     wrapper.instance().setColors({ r: 0, g: 0, b: 0 })
     expect(wrapper.children().html()).toEqual("<div class=\"custom-btn\" style=\"background-color:rgb(0, 0, 0)\">OMEGA BUTTON</div>")

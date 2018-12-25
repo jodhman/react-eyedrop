@@ -23,7 +23,7 @@ type Props = {
   onChange: Function,
   wrapperClasses?: string,
   buttonClasses?: string,
-  buttonComponent?: Node,
+  customComponent?: Node,
   once?: boolean,
   cursorActive?: string,
   cursorInactive?: string,
@@ -57,7 +57,6 @@ export default class EyeDropper extends React.Component<Props, {}> {
   }
 
   pickColor = () => {
-    const body: any = document.body
     const { onPickStart } = this.props
     const { once, cursorActive } = this
 
@@ -96,7 +95,7 @@ export default class EyeDropper extends React.Component<Props, {}> {
     const {
       wrapperClasses,
       buttonClasses,
-      buttonComponent: ButtonComponent,
+      customComponent: CustomComponent,
       passThrough
     } = this.props
 
@@ -104,7 +103,7 @@ export default class EyeDropper extends React.Component<Props, {}> {
 
     return (
       <div style={styles.eyedropperWrapper} className={wrapperClasses}>
-        {ButtonComponent ? <ButtonComponent onClick={this.pickColor} {...shouldPassThrough} /> : <button style={styles.eyedropperWrapperButton} className={buttonClasses} onClick={this.pickColor}>Eye-Drop</button>}
+        {CustomComponent ? <CustomComponent onClick={this.pickColor} {...shouldPassThrough} /> : <button style={styles.eyedropperWrapperButton} className={buttonClasses} onClick={this.pickColor}>Eye-Drop</button>}
       </div>
     )
   }

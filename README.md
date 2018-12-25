@@ -34,7 +34,7 @@ yarn add react-eyedrop
 **[onChange](#api-onChange)** <br>
 **[wrapperClasses](#api-wrapperClasses)** <br>
 **[buttonClasses](#api-buttonClasses)** <br>
-**[buttonComponent](#api-buttonComponent)** <br>
+**[customComponent](#api-customComponent)** <br>
 **[passThrough](#api-passThrough)** <br>
 **[once](#api-once)** <br>
 **[cursorActive](#api-cursorActive)** <br>
@@ -78,8 +78,8 @@ function onChange({ rgb, hex }) {
 <EyeDropper buttonClasses={`my-css-class ${active ? 'my-active-css-class' : ''}`} />
 ```
 
-# <a name="api-buttonComponent"></a>
-#### **buttonComponent**
+# <a name="api-customComponent"></a>
+#### **customComponent**
 ###### Expects `React Node`
 ###### *Use your own component for your EyeDropping business.*
 ###### *Use the `onClick` prop which gets passed down.*
@@ -87,7 +87,7 @@ function onChange({ rgb, hex }) {
 ```
 const Button = ({ onClick }) => <button className="btn" onClick={onClick}>My custom button</button>
 <!-------->
-<EyeDropper buttonComponent={Button} />
+<EyeDropper customComponent={Button} />
 ```
 
 # <a name="api-passThrough"></a>
@@ -98,14 +98,14 @@ const Button = ({ onClick }) => <button className="btn" onClick={onClick}>My cus
 ```
 const Button = ({ onClick, droppedColors }) => <button className="btn" onClick={onClick}>My custom button</button>
 <!-------->
-<EyeDropper buttonComponent={Button} passThrough='droppedColors' />
+<EyeDropper customComponent={Button} passThrough='droppedColors' />
 ```
 
 # <a name="api-once"></a>
 #### **once**
 ###### Expects `boolean`
 ###### Defaults to `true`
-###### *Decide if EyeDroping should stop after having pressed once.*
+###### *Decide if EyeDropping should stop after having pressed once.*
 *Example:*
 ```
 <EyeDropper once />

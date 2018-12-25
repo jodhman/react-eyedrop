@@ -1,18 +1,25 @@
 {
   "name": "react-eyedrop",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A reusable ColorPick EyeDropper written in React.",
   "main": "dist/react-eyedrop.min.js",
   "author": "Manjodh \"Jodhman\" Singh",
   "license": "MIT",
   "keywords": [
     "react",
-    "eyedropper",
-    "colorpicker"
+    "eye",
+    "dropper",
+    "color",
+    "picker"
   ],
   "files": [
     "dist"
   ],
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/jodhman/react-eyedrop"
+  },
+  "homepage": "https://github.com/jodhman/react-eyedrop/blob/master/README.md",
   "scripts": {
     "build": "rollup -c -o dist/react-eyedrop.min.js",
     "test": "jest",
