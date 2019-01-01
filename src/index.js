@@ -30,7 +30,8 @@ type Props = {
   onInit?: Function,
   onPickStart?: Function,
   onPickEnd?: Function,
-  passThrough?: string
+  passThrough?: string,
+  pickRadius?: number
 }
 
 type State = {
@@ -67,9 +68,16 @@ export default class EyeDropper extends React.Component<Props, {}> {
 
   targetToCanvas = (e: *) => {
     const { target } = e
+    const { pickRadius } = this.props
 
     html2canvas(target, { logging: false })
-    .then((canvas) => this.extractColor(canvas, e))
+    .then((canvas) => {
+      if (pickRadius) {
+        this.extractColors(canvas, e)
+      } else {
+        this.extractColor(canvas, e)
+      }
+    })
   }
 
   extractColor = (canvas: *, e: *) => {
@@ -77,6 +85,45 @@ export default class EyeDropper extends React.Component<Props, {}> {
 
     const colors = getCanvasPixelColor(canvas, offsetX, offsetY)
     this.setColors(colors)
+  }
+
+  extractColors = (canvas: *, e: *) => {
+    const { offsetX, offsetY } = e
+    const { pickRadius } = this.props
+
+    const maxRadius = (pickRadius % 2) === 0 ? (pickRadius / 2) : ((pickRadius - 1) / 2)
+    const minRadius = (pickRadius % 2) === 0 ? -(pickRadius / 2) : -((pickRadius - 1) / 2) - 1
+    const colors = []
+    let radialOffsetX, radialOffsetY
+    for(let x = maxRadius; x !== (minRadius); x--) {
+      for(let y = maxRadius; y !== (minRadius); y--) {
+        radialOffsetX = (offsetX - x)
+        radialOffsetY = (offsetY - y)
+
+        if (!(radialOffsetX < 0) && !(radialOffsetY < 0)) {
+          colors.push(getCanvasPixelColor(canvas, radialOffsetX, radialOffsetY))
+        }
+      }
+    }
+    this.calcAverageColor(colors)
+  }
+
+  calcAverageColor = (colors: Array<{r: number, g: number, b: number}>) => {
+    let totalR = 0, totalG = 0, totalB = 0
+    colors.map(({ r, g, b }, index) => {
+      totalR += r * r
+      totalG += g * g
+      totalB += b * b
+      if(index !== 0) {
+        totalR = Math.sqrt(totalR / 2)
+        totalG = Math.sqrt(totalG / 2)
+        totalB = Math.sqrt(totalB / 2)
+      }
+    })
+    const averageR = parseInt(totalR)
+    const averageG = parseInt(totalG)
+    const averageB = parseInt(totalB)
+    this.setColors({ r: averageR, g: averageG, b: averageB })
   }
 
   setColors = ({ r, g, b }) => {

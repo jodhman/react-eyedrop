@@ -37,6 +37,7 @@ yarn add react-eyedrop
 **[customComponent](#api-customComponent)** <br>
 **[passThrough](#api-passThrough)** <br>
 **[once](#api-once)** <br>
+**[pickRadius](#api-pickRadius)** <br>
 **[cursorActive](#api-cursorActive)** <br>
 **[cursorInactive](#api-cursorInactive)** <br>
 **[onInit](#api-onInit)** <br>
@@ -111,6 +112,16 @@ const Button = ({ onClick, droppedColors }) => <button className="btn" onClick={
 <EyeDropper once />
 /* or */
 <EyeDropper once={false} />
+```
+
+# <a name="api-pickRadius"></a>
+#### **pickRadius**
+###### Expects `number`
+###### *If you're want to change the default 1x1 pixel selection, here's where you do it.*
+*Example:*
+```
+<EyeDropper pickRadius={3} />
+/* This will result in 3x3 equals 9 pixels which the average color will be generated from. */
 ```
 
 # <a name="api-cursorActive"></a>
@@ -193,6 +204,12 @@ npm run test
 
 ## Release History
 
+* 2.1.1
+    * Added pickRadius feature
+* 2.0.1
+    * Updated documentation
+* 2.0.0
+    * Changed prop name from buttonComponent to customComponent
 * 1.0.0
     * Initial release
 
