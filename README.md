@@ -117,7 +117,7 @@ const Button = ({ onClick, droppedColors }) => <button className="btn" onClick={
 # <a name="api-pickRadius"></a>
 #### **pickRadius**
 ###### Expects `number`
-###### *If you're want to change the default 1x1 pixel selection, here's where you do it.*
+###### *If you want to change the default 1x1 pixel selection, here's where you do it.*
 *Example:*
 ```
 <EyeDropper pickRadius={3} />
@@ -204,6 +204,8 @@ npm run test
 
 ## Release History
 
+* 2.1.2
+    * Fixed typo in documentation
 * 2.1.1
     * Added pickRadius feature
 * 2.0.1
