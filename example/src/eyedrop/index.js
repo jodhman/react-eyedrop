@@ -31,7 +31,7 @@ type Props = {
   onPickStart?: Function,
   onPickEnd?: Function,
   passThrough?: string,
-  pickRadius?: number
+  pickRadius?: { unit: 'pixel' | 'radius', amount: number }
 }
 
 type State = {
@@ -89,14 +89,28 @@ export default class EyeDropper extends React.Component<Props, {}> {
 
   extractColors = (canvas: *, e: *) => {
     const { offsetX, offsetY } = e
-    const { pickRadius } = this.props
+    const { unit, amount } = this.props.pickRadius
 
-    const maxRadius = (pickRadius % 2) === 0 ? (pickRadius / 2) : ((pickRadius - 1) / 2)
-    const minRadius = (pickRadius % 2) === 0 ? -(pickRadius / 2) : -((pickRadius - 1) / 2) - 1
+    let maxRadius, minRadius
+    if (unit === 'radius') {
+      maxRadius = amount
+      minRadius = -(amount) - 1
+    } else if (unit === 'pixel') {
+      if (amount % 2 !== 0) {
+        maxRadius = ((amount - 1) / 2)
+        minRadius = -((amount - 1) / 2) - 1
+      } else {
+        throw new Error('[EyeDrop] The unit \'pixel\' may only have an odd amount.')
+      }
+    } else {
+      throw new Error('[EyeDrop] Please define a proper unit type.')
+    }
+
     const colors = []
     let radialOffsetX, radialOffsetY
-    for(let x = maxRadius; x !== (minRadius); x--) {
-      for(let y = maxRadius; y !== (minRadius); y--) {
+
+    for(let x = maxRadius; x !== minRadius; x--) {
+      for(let y = maxRadius; y !== minRadius; y--) {
         radialOffsetX = (offsetX - x)
         radialOffsetY = (offsetY - y)
 

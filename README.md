@@ -116,12 +116,33 @@ const Button = ({ onClick, droppedColors }) => <button className="btn" onClick={
 
 # <a name="api-pickRadius"></a>
 #### **pickRadius**
-###### Expects `number`
+###### Expects `object` with the following form:
+```
+{
+    unit: 'radius' | 'pixel',
+    amount: number
+}
+```
 ###### *If you want to change the default 1x1 pixel selection, here's where you do it.*
+###### For `unit`, choose either *'radius'* or *'pixel'*
 *Example:*
 ```
-<EyeDropper pickRadius={3} />
+<EyeDropper pickRadius={{ unit: 'pixel', amount: 3 }} />
 /* This will result in 3x3 equals 9 pixels which the average color will be generated from. */
+<EyeDropper pickRadius={{ unit: 'pixel', amount: 5 }} />
+/* 5x5 */
+<EyeDropper pickRadius={{ unit: 'pixel', amount: 7 }} />
+/* 7x7 */
+/* note: unit type 'pixel' only works with an odd amount */
+
+/* or */
+
+<EyeDropper pickRadius={{ unit: 'radius', amount: 1 }} />
+/* This will result in 3x3 equals 9 pixels. */
+<EyeDropper pickRadius={{ unit: 'radius', amount: 2 }} />
+/* This will result in 5x5 equals 25 pixels. */
+<EyeDropper pickRadius={{ unit: 'radius', amount: 3 }} />
+/* This will result in 7x7 equals 49 pixels. */
 ```
 
 # <a name="api-cursorActive"></a>
@@ -204,6 +225,8 @@ npm run test
 
 ## Release History
 
+* 3.0.0
+    * Updated pickRadius feature to work with different units; radius & pixel.
 * 2.1.2
     * Fixed typo in documentation
 * 2.1.1
