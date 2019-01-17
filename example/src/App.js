@@ -1,6 +1,6 @@
 import React from 'react'
 import { hot } from 'react-hot-loader'
-import EyeDropper from './eyedrop'
+import EyeDropper from 'react-eyedrop'
 
 import './App.css'
 
