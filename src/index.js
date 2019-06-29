@@ -54,8 +54,14 @@ export default class EyeDropper extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { onInit } = this.props
+    const { onInit, pickRadius } = this.props
     if (onInit) { onInit() }
+
+    if(pickRadius) {
+     if (pickRadius.amount > 1){
+       throw new Error('Amount should never be below 1.')
+     }
+    }
   }
 
   componentWillReceiveProps(nextProps: Props) {
