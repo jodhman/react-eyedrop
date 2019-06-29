@@ -1,6 +1,6 @@
 {
   "name": "react-eyedrop",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "A reusable ColorPick EyeDropper written in React.",
   "main": "dist/react-eyedrop.min.js",
   "author": "Manjodh \"Jodhman\" Singh",

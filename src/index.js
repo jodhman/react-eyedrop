@@ -38,16 +38,17 @@ type State = {
   colors: {
     rgb: string,
     hex: string
-  }
+  },
+  pickingColorFromDocument: boolean
 }
 
 export default class EyeDropper extends React.Component<Props, State> {
   constructor(props) {
     super(props)
     this.state = {
-      colors: { rgb: '', hex: '' }
+      colors: { rgb: '', hex: '' },
+      pickingColorFromDocument: false
     }
-    this.once = (props.once !== undefined) ? props.once : true
     this.cursorActive = props.cursorActive ? props.cursorActive : 'copy'
     this.cursorInactive = props.cursorInactive ? props.cursorInactive : 'auto'
   }
@@ -57,13 +58,25 @@ export default class EyeDropper extends React.Component<Props, State> {
     if (onInit) { onInit() }
   }
 
+  componentWillReceiveProps(nextProps: Props) {
+    if(nextProps.once !== this.props.once && nextProps.once) {
+      document.removeEventListener('click', this.targetToCanvas)
+      document.body.style.cursor = this.cursorInactive
+      this.setState({ pickingColorFromDocument: false })
+    }
+  }
+
   pickColor = () => {
-    const { onPickStart } = this.props
-    const { once, cursorActive } = this
+    const { onPickStart, once } = this.props
+    const { pickingColorFromDocument } = this.state
+    const { cursorActive } = this
 
     if (onPickStart) { onPickStart() }
     document.body.style.cursor = cursorActive
-    document.addEventListener('click', this.targetToCanvas, { once })
+    if(!pickingColorFromDocument) {
+      document.addEventListener('click', this.targetToCanvas, { once })
+      this.setState({ pickingColorFromDocument: true })
+    }
   }
 
   targetToCanvas = (e: *) => {
@@ -157,15 +170,33 @@ export default class EyeDropper extends React.Component<Props, State> {
       wrapperClasses,
       buttonClasses,
       customComponent: CustomComponent,
-      passThrough
+      passThrough,
+      children
     } = this.props
 
     const shouldPassThrough = passThrough ? { [passThrough]: this.state.colors } : {}
 
     return (
       <div style={styles.eyedropperWrapper} className={wrapperClasses}>
-        {CustomComponent ? <CustomComponent onClick={this.pickColor} {...shouldPassThrough} /> : <button style={styles.eyedropperWrapperButton} className={buttonClasses} onClick={this.pickColor}>Eye-Drop</button>}
+        {CustomComponent ? (
+          <CustomComponent
+            onClick={this.pickColor}
+            {...shouldPassThrough}
+          />
+        ) : (
+          <button
+            style={styles.eyedropperWrapperButton}
+            className={buttonClasses}
+            onClick={this.pickColor}
+          >
+            {children ? children : 'Eye-Drop'}
+          </button>
+        )}
       </div>
     )
   }
+}
+
+EyeDropper.defaultProps = {
+  once: true
 }

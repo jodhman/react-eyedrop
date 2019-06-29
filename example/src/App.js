@@ -12,7 +12,8 @@ class App extends React.Component {
       pickedColor: {
         rgb: '',
         hex: ''
-      }
+      },
+      eyedropOnce: false
     }
   }
   
@@ -35,15 +36,21 @@ class App extends React.Component {
     </div>
   )
 
+  toggleOnce = () => {
+    this.setState({ eyedropOnce: !this.state.eyedropOnce })
+  }
+
   render() {
-    const { image, pickedColor } = this.state
+    const { image, eyedropOnce } = this.state
     const { rgb, hex } = this.state.pickedColor
     return (
       <div className="image-eyedropper-mode-wrapper">
         <div className="upload-image">
           {image ? (
             <div className="eyedrop-wrapper">
-              <EyeDropper onChange={this.handleChangeColor} />
+              <EyeDropper once={eyedropOnce} onChange={this.handleChangeColor} />
+              <p>Once: {eyedropOnce.toString()}</p>
+              <button onClick={this.toggleOnce}>Toggle `once` prop</button>
               <div style={{ backgroundColor: rgb }} className="eyedrop-color" />
               <p style={{color: 'rgb(123, 155, 22)'}}>RGB</p>
               <p>{rgb}</p>
