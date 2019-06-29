@@ -41,7 +41,7 @@ type State = {
   }
 }
 
-export default class EyeDropper extends React.Component<Props, {}> {
+export default class EyeDropper extends React.Component<Props, State> {
   constructor(props) {
     super(props)
     this.state = {
@@ -142,11 +142,11 @@ export default class EyeDropper extends React.Component<Props, {}> {
 
   setColors = ({ r, g, b }) => {
     const { cursorInactive } = this
-    const { onPickEnd, passThrough } = this.props
+    const { onPickEnd, passThrough, once } = this.props
     const rgb = `rgb(${r}, ${b}, ${g})`
     const hex = rgbToHex(r, b, g)
 
-    document.body.style.cursor = cursorInactive
+    if(once) { document.body.style.cursor = cursorInactive }
     if (passThrough) { this.setState({ colors: { rgb, hex } }) }
     this.props.onChange({ rgb, hex })
     if (onPickEnd) { onPickEnd() }
