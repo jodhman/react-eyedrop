@@ -106,7 +106,7 @@ const Button = ({ onClick, droppedColors }) => <button className="btn" onClick={
 #### **once**
 ###### Expects `boolean`
 ###### Defaults to `true`
-###### *Decide if EyeDropping should stop after having pressed once.*
+###### *Decide if EyeDropping should stop after having pressed once. If you set this property to false, and then later change the value dynamically to true, you will ultimately remove the document event listener and resetting the body.cursor to cursorInactive.*
 *Example:*
 ```
 <EyeDropper once />

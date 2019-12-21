@@ -1,6 +1,6 @@
 {
   "name": "react-eyedrop",
-  "version": "3.0.0",
+  "version": "3.3.2",
   "description": "A reusable ColorPick EyeDropper written in React.",
   "main": "dist/react-eyedrop.min.js",
   "author": "Manjodh \"Jodhman\" Singh",
@@ -8,6 +8,7 @@
   "keywords": [
     "react",
     "eye",
+    "drop",
     "dropper",
     "color",
     "picker",
@@ -17,8 +18,8 @@
     "dist"
   ],
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/jodhman/react-eyedrop"
+    "type": "git",
+    "url": "https://github.com/jodhman/react-eyedrop"
   },
   "homepage": "https://github.com/jodhman/react-eyedrop/blob/master/README.md",
   "scripts": {
@@ -30,7 +31,7 @@
   "dependencies": {
     "react": "^16.6.3",
     "html2canvas": "^1.0.0-alpha.12",
-    "get-canvas-pixel-color": "^1.0.0"
+    "get-canvas-pixel-color": "^2.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.2.2",
