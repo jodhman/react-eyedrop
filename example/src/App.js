@@ -13,7 +13,7 @@ class App extends React.Component {
         rgb: '',
         hex: ''
       },
-      eyedropOnce: false
+      eyedropOnce: true
     }
   }
   
