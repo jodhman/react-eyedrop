@@ -1,5 +1,5 @@
 // @flow
-import React, { useState, useEffect, useCallback, useLayoutEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import type, { Node } from 'react'
 import html2canvas from 'html2canvas'
 import getCanvasPixelColor from 'get-canvas-pixel-color'
@@ -112,10 +112,9 @@ const EyeDropper = props => {
   }, [exitPick])
 
   // exiting continuous pick when esc key is pressed
-  const exitPick = useCallback(event => {
-    // console.log('some key is pressed');
+  const exitPick = useCallback(event => {    
     // console.log("current props.once " + props.once)
-    // console.log("current pickingColorFromDocument.once " + pickingColorFromDocument)
+    // console.log("current pickingColorFromDocument" + pickingColorFromDocument)
     
     if (event.keyCode === 27) {
       // console.log("esc key pressed, exiting pick")
@@ -137,16 +136,12 @@ const EyeDropper = props => {
 
   const targetToCanvas = (e: *) => {
     html2canvas(document.body)
-      .then((canvasEl) => {
-        // console.log('canvas captured')
-        // console.log(canvasEl)
+      .then((canvasEl) => {     
+        // console.log('canvas captured: ' + canvasEl)
 
         // stores canvas and click event states to process before next mount
         setClickEvent(e);
         setCanvas(canvasEl);
-
-        // document.body.appendChild(canvasEl)
-
         // console.log('current canvas state:' + canvas);
       })
 
@@ -228,7 +223,10 @@ const EyeDropper = props => {
     const hex = rgbToHex(r, g, b)
 
     if (passThrough) { setColors({ rgb, hex }) }
-    props.onChange({ rgb, hex })
+
+    // set color object to parent handler
+    props.onChange({ rgb, hex, buttonDisabled, customProps})
+
     if (onPickEnd) { onPickEnd() }
   }
 
@@ -237,7 +235,8 @@ const EyeDropper = props => {
     buttonClasses,
     customComponent: CustomComponent,
     passThrough,
-    children
+    children,
+    customProps 
   } = props
 
   const shouldPassThrough = passThrough ? { [passThrough]: colors } : {}
@@ -247,7 +246,8 @@ const EyeDropper = props => {
       {CustomComponent ? (
         <CustomComponent
           onClick={pickColor}
-          {...shouldPassThrough}
+          {...shouldPassThrough}          
+          customProps={customProps}
         />
       ) : (
           <button
@@ -256,7 +256,7 @@ const EyeDropper = props => {
             onClick={pickColor}
             disabled={buttonDisabled}
           >
-            {children ? children : 'Eye-Drop'}
+            {children ? children : ''}
           </button>
         )}
     </div>
