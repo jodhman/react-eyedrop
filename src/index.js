@@ -1,6 +1,6 @@
 // @flow
-import React from 'react'
-import type { Node } from 'react'
+import React, { useState, useEffect, useCallback, useLayoutEffect } from 'react'
+import type, { Node } from 'react'
 import html2canvas from 'html2canvas'
 import getCanvasPixelColor from 'get-canvas-pixel-color'
 
@@ -42,73 +42,136 @@ type State = {
   pickingColorFromDocument: boolean
 }
 
-export default class EyeDropper extends React.Component<Props, State> {
-  constructor(props) {
-    super(props)
-    this.state = {
-      colors: { rgb: '', hex: '' },
-      pickingColorFromDocument: false
-    }
-    this.cursorActive = props.cursorActive ? props.cursorActive : 'copy'
-    this.cursorInactive = props.cursorInactive ? props.cursorInactive : 'auto'
-  }
+const EyeDropper = props => {
+  const [colors, setColors] = useState({ rgb: '', hex: '' });
+  const [pickingColorFromDocument, setPickingColorFromDocument] = useState(false);
+  const [buttonDisabled, setButtonDisabled] = useState(false); 
 
-  componentDidMount() {
-    const { onInit, pickRadius } = this.props
+  // for canvas
+  var initialCanvas = document.createElement("canvas");
+  const [canvas, setCanvas] = useState(initialCanvas);
+  const [clickEvent, setClickEvent] = useState(false);
+
+  const cursorActive = props.cursorActive ? props.cursorActive : 'copy'
+  const cursorInactive = props.cursorInactive ? props.cursorInactive : 'auto'
+
+  useEffect(() => {
+    const { onInit, pickRadius } = props
+
     if (onInit) { onInit() }
-
-    if(pickRadius) {
-     if (pickRadius.amount > 1){
-       throw new Error('Amount should never be below 1.')
-     }
-    }
-  }
-
-  componentWillReceiveProps(nextProps: Props) {
-    if(nextProps.once !== this.props.once && nextProps.once) {
-      document.removeEventListener('click', this.targetToCanvas)
-      document.body.style.cursor = this.cursorInactive
-      this.setState({ pickingColorFromDocument: false })
-    }
-  }
-
-  pickColor = () => {
-    const { onPickStart, once } = this.props
-    const { pickingColorFromDocument } = this.state
-    const { cursorActive } = this
-
-    if (onPickStart) { onPickStart() }
-    document.body.style.cursor = cursorActive
-    if(!pickingColorFromDocument) {
-      document.addEventListener('click', this.targetToCanvas, { once })
-      this.setState({ pickingColorFromDocument: true })
-    }
-  }
-
-  targetToCanvas = (e: *) => {
-    const { target } = e
-    const { pickRadius } = this.props
-
-    html2canvas(target, { logging: false })
-    .then((canvas) => {
-      if (pickRadius) {
-        this.extractColors(canvas, e)
-      } else {
-        this.extractColor(canvas, e)
+    if (pickRadius) {
+      if (pickRadius.amount < 1) {
+        throw new Error('Amount should never be below 1.')
       }
-    })
+    }
+  }, []);
+
+  useEffect(() => {
+    // setting "props.once" property
+    let once;    
+    if (typeof props.once !== "undefined") { once = props.once; }
+    else { once = true; } // set default to true
+
+    // console.log("start of cycle props once: " + once)
+
+    if (pickingColorFromDocument) {
+      document.addEventListener("click", targetToCanvas)
+    }
+    return () => {
+      // console.log("removing listener")
+      // console.log("end of cycle props once: " + props.once)
+
+      if (once || pickingColorFromDocument) {
+        document.removeEventListener("click", targetToCanvas)
+      }
+    }
+  }, [pickingColorFromDocument, props.once])
+
+  // get and process stored canvas and click event states before next mount
+  useEffect(() => {
+    return () => {
+      if (clickEvent) {
+        const { pickRadius } = props
+
+        if (pickRadius) {
+          extractColors(canvas, clickEvent)
+        } else {
+          extractColor(canvas, clickEvent)
+        }
+        setClickEvent(false);
+      }
+    }
+  })
+
+  // setup listener for the esc key 
+  useEffect(() => {
+    window.addEventListener('keydown', exitPick)
+    return () => {
+      document.addEventListener('keydown', exitPick);
+    }
+  }, [exitPick])
+
+  // exiting continuous pick when esc key is pressed
+  const exitPick = useCallback(event => {
+    // console.log('some key is pressed');
+    // console.log("current props.once " + props.once)
+    // console.log("current pickingColorFromDocument.once " + pickingColorFromDocument)
+    
+    if (event.keyCode === 27) {
+      // console.log("esc key pressed, exiting pick")
+      setPickingColorFromDocument(false)
+      setButtonDisabled(false);
+      document.body.style.cursor = cursorInactive
+    }
+  }, [])
+
+  // handles button click to start/stop action
+  const pickColor = () => {
+    const { onPickStart, once } = props
+
+    setButtonDisabled(true)
+    if (onPickStart) { onPickStart() }
+    document.body.style.cursor = cursorActive;
+    setPickingColorFromDocument(true);
   }
 
-  extractColor = (canvas: *, e: *) => {
-    const { offsetX, offsetY } = e
+  const targetToCanvas = (e: *) => {
+    html2canvas(document.body)
+      .then((canvasEl) => {
+        // console.log('canvas captured')
+        // console.log(canvasEl)
 
-    const colors = getCanvasPixelColor(canvas, offsetX, offsetY)
-    this.setColors(colors)
+        // stores canvas and click event states to process before next mount
+        setClickEvent(e);
+        setCanvas(canvasEl);
+
+        // document.body.appendChild(canvasEl)
+
+        // console.log('current canvas state:' + canvas);
+      })
+
+    // console.log('in drawing once: ' + props.once)
+
+    if (props.once === true || props.once === undefined) {
+      // console.log('turning off single picking')
+      setPickingColorFromDocument(false)
+      setButtonDisabled(false);
+      document.body.style.cursor = cursorInactive
+    }
   }
 
-  extractColors = (canvas: *, e: *) => {
-    const { offsetX, offsetY } = e
-    const { unit, amount } = this.props.pickRadius
+  const extractColor = (canvas: *, e: *) => {
+    // console.log("entering extraColor func");
+    const { pageX, pageY } = e
+    // console.log("X-position: " + pageX + "  Y-position: " + pageY);
+
+    let pixelColor = getCanvasPixelColor(canvas, pageX, pageY)
+    updateColors(pixelColor)
+  }
+
+  const extractColors = (canvas: *, e: *) => {
+    const { pageX, pageY } = e
+    const { unit, amount } = props.pickRadius
 
     let maxRadius, minRadius
     if (unit === 'radius') {
@@ -125,29 +188,29 @@ export default class EyeDropper extends React.Component<Props, State> {
       throw new Error('[EyeDrop] Please define a proper unit type.')
     }
 
-    const colors = []
+    const colorBlock = []
     let radialOffsetX, radialOffsetY
 
-    for(let x = maxRadius; x !== minRadius; x--) {
-      for(let y = maxRadius; y !== minRadius; y--) {
-        radialOffsetX = (offsetX - x)
-        radialOffsetY = (offsetY - y)
+    for (let x = maxRadius; x !== minRadius; x--) {
+      for (let y = maxRadius; y !== minRadius; y--) {
+        radialOffsetX = (pageX - x)
+        radialOffsetY = (pageY - y)
 
         if (!(radialOffsetX < 0) && !(radialOffsetY < 0)) {
-          colors.push(getCanvasPixelColor(canvas, radialOffsetX, radialOffsetY))
+          colorBlock.push(getCanvasPixelColor(canvas, radialOffsetX, radialOffsetY))
         }
       }
     }
-    this.calcAverageColor(colors)
+    calcAverageColor(colorBlock)
   }
 
-  calcAverageColor = (colors: Array<{r: number, g: number, b: number}>) => {
+  const calcAverageColor = (colorBlock: Array<{ r: number, g: number, b: number }>) => {
     let totalR = 0, totalG = 0, totalB = 0
-    colors.map(({ r, g, b }, index) => {
+    colorBlock.map(({ r, g, b }, index) => {
       totalR += r * r
       totalG += g * g
       totalB += b * b
-      if(index !== 0) {
+      if (index !== 0) {
         totalR = Math.sqrt(totalR / 2)
         totalG = Math.sqrt(totalG / 2)
         totalB = Math.sqrt(totalB / 2)
@@ -156,53 +219,48 @@ export default class EyeDropper extends React.Component<Props, State> {
     const averageR = parseInt(totalR)
     const averageG = parseInt(totalG)
     const averageB = parseInt(totalB)
-    this.setColors({ r: averageR, g: averageG, b: averageB })
+    updateColors({ r: averageR, g: averageG, b: averageB })
   }
 
-  setColors = ({ r, g, b }) => {
-    const { cursorInactive } = this
-    const { onPickEnd, passThrough, once } = this.props
-    const rgb = `rgb(${r}, ${b}, ${g})`
-    const hex = rgbToHex(r, b, g)
+  const updateColors = ({ r, g, b }) => {
+    const { onPickEnd, passThrough } = props
+    const rgb = `rgb(${r}, ${g}, ${b})`
+    const hex = rgbToHex(r, g, b)
 
-    if(once) { document.body.style.cursor = cursorInactive }
-    if (passThrough) { this.setState({ colors: { rgb, hex } }) }
-    this.props.onChange({ rgb, hex })
+    if (passThrough) { setColors({ rgb, hex }) }
+    props.onChange({ rgb, hex })
     if (onPickEnd) { onPickEnd() }
   }
 
-  render() {
-    const {
-      wrapperClasses,
-      buttonClasses,
-      customComponent: CustomComponent,
-      passThrough,
-      children
-    } = this.props
+  const {
+    wrapperClasses,
+    buttonClasses,
+    customComponent: CustomComponent,
+    passThrough,
+    children
+  } = props
 
-    const shouldPassThrough = passThrough ? { [passThrough]: this.state.colors } : {}
+  const shouldPassThrough = passThrough ? { [passThrough]: colors } : {}
 
-    return (
-      <div style={styles.eyedropperWrapper} className={wrapperClasses}>
-        {CustomComponent ? (
-          <CustomComponent
-            onClick={this.pickColor}
-            {...shouldPassThrough}
-          />
-        ) : (
+  return (
+    <div style={styles.eyedropperWrapper} className={wrapperClasses}>
+      {CustomComponent ? (
+        <CustomComponent
+          onClick={pickColor}
+          {...shouldPassThrough}
+        />
+      ) : (
           <button
             style={styles.eyedropperWrapperButton}
             className={buttonClasses}
-            onClick={this.pickColor}
+            onClick={pickColor}
+            disabled={buttonDisabled}
           >
             {children ? children : 'Eye-Drop'}
           </button>
         )}
-      </div>
-    )
-  }
+    </div>
+  )
 }
 
-EyeDropper.defaultProps = {
-  once: true
-}
+export default EyeDropper;
