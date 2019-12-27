@@ -35,7 +35,9 @@ yarn add react-eyedrop
 **[wrapperClasses](#api-wrapperClasses)** <br>
 **[buttonClasses](#api-buttonClasses)** <br>
 **[customComponent](#api-customComponent)** <br>
-**[passThrough](#api-passThrough)** <br>
+**[customProps](#api-customProps)** <br>
+**[colorsPassThrough](#api-colorsPassThrough)** <br>
+**[disabled](#api-disabled)** <br>
 **[once](#api-once)** <br>
 **[pickRadius](#api-pickRadius)** <br>
 **[cursorActive](#api-cursorActive)** <br>
@@ -49,7 +51,8 @@ yarn add react-eyedrop
 ###### `required`
 ###### Expects `function`
 ###### Returns an object:
-###### ` { rgb: string, hex: string } `
+###### Available properties` { rgb: string, hex: string, customProps: object } `
+###### *This returns the picked color data and the user's passed in data object, see customProps for usage.*
 *Example:*
 ```
 function onChange({ rgb, hex }) {
@@ -86,20 +89,48 @@ function onChange({ rgb, hex }) {
 ###### *Use the `onClick` prop which gets passed down.*
 *Example:*
 ```
-const Button = ({ onClick }) => <button className="btn" onClick={onClick}>My custom button</button>
+const Button = ({ onClick }) => 
+    <button className="btn" onClick={onClick} >My custom button</button>
 <!-------->
 <EyeDropper customComponent={Button} />
 ```
 
-# <a name="api-passThrough"></a>
-#### **passThrough**
-###### Expects `string`
-###### *If you use your own button component, you can choose to pass down the resulting colors as a prop named by whatever you pass in here.*
+# <a name="api-customProps"></a>
+#### **customProps**
+###### Expects `object`
+###### Requires customComponent to be set
+###### *User can pass in their own data to the customComponent, the data can then be retrieved along with the color values in the onChange handler.*
 *Example:*
 ```
-const Button = ({ onClick, droppedColors }) => <button className="btn" onClick={onClick}>My custom button</button>
+const onChange = ({ rgb, hex, customProps }) => {
+    const { data1, data2, } = customProps
+}
 <!-------->
-<EyeDropper customComponent={Button} passThrough='droppedColors' />
+<Eyedropper customComponent={Button} customProps={{data1, data2, data3}} onChange={onChange}/>
+```
+
+# <a name="api-colorsPassThrough"></a>
+#### **colorsPassThrough**
+###### Expects `string`
+###### *Provides access to the picked color value object { rgb, hex } for the eyedropper component.*
+###### *Name provided here will be the name of the color object*
+*Example:*
+```
+const Button = ({ onClick, pixelColors }) => 
+    <button className="btn" onClick={onClick} style={{backgroundColor: pixelColors.hex}}>My custom button</button>
+<!-------->
+<EyeDropper customComponent={Button} colorsPassThrough='pixelColors' />
+```
+
+# <a name="api-disabled"></a>
+#### **disabled**
+###### Expects `boolean`
+###### *Internal property provided by the eyedropper component for passing down to the customComponent. It gives control disabling the button element while color picking is active*
+
+*Example:*
+```
+const Button = ({ onClick, disabled }) => 
+    <button className="btn" onClick={onClick} disabled={disabled} >My custom button</button>
 ```
 
 # <a name="api-once"></a>

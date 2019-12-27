@@ -30,7 +30,7 @@ type Props = {
   onInit?: Function,
   onPickStart?: Function,
   onPickEnd?: Function,
-  passThrough?: string,
+  colorsPassThrough?: string,
   pickRadius?: { unit: 'pixel' | 'radius', amount: number }
 }
 
@@ -218,14 +218,14 @@ const EyeDropper = props => {
   }
 
   const updateColors = ({ r, g, b }) => {
-    const { onPickEnd, passThrough } = props
+    const { onPickEnd } = props
     const rgb = `rgb(${r}, ${g}, ${b})`
     const hex = rgbToHex(r, g, b)
 
-    if (passThrough) { setColors({ rgb, hex }) }
-
+    setColors({ rgb, hex }) 
+    
     // set color object to parent handler
-    props.onChange({ rgb, hex, buttonDisabled, customProps})
+    props.onChange({ rgb, hex, customProps})
 
     if (onPickEnd) { onPickEnd() }
   }
@@ -234,20 +234,21 @@ const EyeDropper = props => {
     wrapperClasses,
     buttonClasses,
     customComponent: CustomComponent,
-    passThrough,
+    colorsPassThrough,
     children,
-    customProps 
+    customProps,    
   } = props
 
-  const shouldPassThrough = passThrough ? { [passThrough]: colors } : {}
+  const shouldColorsPassThrough = colorsPassThrough ? { [colorsPassThrough]: colors } : {}
 
   return (
     <div style={styles.eyedropperWrapper} className={wrapperClasses}>
       {CustomComponent ? (
         <CustomComponent
           onClick={pickColor}
-          {...shouldPassThrough}          
+          {...shouldColorsPassThrough}          
           customProps={customProps}
+          disabled={buttonDisabled}          
         />
       ) : (
           <button
