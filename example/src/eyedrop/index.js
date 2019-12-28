@@ -39,7 +39,8 @@ type State = {
     rgb: string,
     hex: string
   },
-  pickingColorFromDocument: boolean
+  pickingColorFromDocument: boolean,
+  buttonDisabled: boolean
 }
 
 const EyeDropper = props => {
@@ -88,19 +89,6 @@ const EyeDropper = props => {
     }
   }, [exitPick])
 
-  // end of life cycle, processing gathered data after colors updated
-  useEffect(() => {
-    return () => {
-      const { onPickEnd } = props
-      const { rgb, hex } = colors
-
-      // set color object to parent handler
-      props.onChange({ rgb, hex, customProps })
-
-      if (onPickEnd) { onPickEnd() }
-    }
-  }, [colors])
-
   // exiting continuous pick when esc key is pressed
   const exitPick = useCallback(event => {
     if (event.keyCode === 27) {     
@@ -121,7 +109,7 @@ const EyeDropper = props => {
   }
 
   const targetToCanvas = (e: *) => {
-    html2canvas(document.body)
+    html2canvas(document.body, { logging:false })
       .then((canvasEl) => {
         const { pickRadius } = props
 
@@ -203,10 +191,16 @@ const EyeDropper = props => {
   }
 
   const updateColors = ({ r, g, b }) => {
+    const { onPickEnd } = props
     const rgb = `rgb(${r}, ${g}, ${b})`
     const hex = rgbToHex(r, g, b)
 
+    // set color object to parent handler      
+    props.onChange({ rgb, hex, customProps })
+
     setColors({ rgb, hex })
+
+    if (onPickEnd) { onPickEnd() }
   }
 
   const {
