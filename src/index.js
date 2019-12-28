@@ -43,18 +43,15 @@ type State = {
 }
 
 const EyeDropper = props => {
+
   const [colors, setColors] = useState({ rgb: '', hex: '' });
   const [pickingColorFromDocument, setPickingColorFromDocument] = useState(false);
-  const [buttonDisabled, setButtonDisabled] = useState(false); 
-
-  // for canvas
-  var initialCanvas = document.createElement("canvas");
-  const [canvas, setCanvas] = useState(initialCanvas);
-  const [clickEvent, setClickEvent] = useState(false);
+  const [buttonDisabled, setButtonDisabled] = useState(false);
 
   const cursorActive = props.cursorActive ? props.cursorActive : 'copy'
   const cursorInactive = props.cursorInactive ? props.cursorInactive : 'auto'
 
+  // initial stage of life cycle, catching errors
   useEffect(() => {
     const { onInit, pickRadius } = props
 
@@ -66,42 +63,22 @@ const EyeDropper = props => {
     }
   }, []);
 
+  // setup listener for canvas picking click
   useEffect(() => {
     // setting "props.once" property
-    let once;    
+    let once;
     if (typeof props.once !== "undefined") { once = props.once; }
     else { once = true; } // set default to true
-
-    // console.log("start of cycle props once: " + once)
 
     if (pickingColorFromDocument) {
       document.addEventListener("click", targetToCanvas)
     }
     return () => {
-      // console.log("removing listener")
-      // console.log("end of cycle props once: " + props.once)
-
       if (once || pickingColorFromDocument) {
         document.removeEventListener("click", targetToCanvas)
       }
     }
   }, [pickingColorFromDocument, props.once])
-
-  // get and process stored canvas and click event states before next mount
-  useEffect(() => {
-    return () => {
-      if (clickEvent) {
-        const { pickRadius } = props
-
-        if (pickRadius) {
-          extractColors(canvas, clickEvent)
-        } else {
-          extractColor(canvas, clickEvent)
-        }
-        setClickEvent(false);
-      }
-    }
-  })
 
   // setup listener for the esc key 
   useEffect(() => {
@@ -111,44 +88,51 @@ const EyeDropper = props => {
     }
   }, [exitPick])
 
+  // end of life cycle, processing gathered data after colors updated
+  useEffect(() => {
+    return () => {
+      const { onPickEnd } = props
+      const { rgb, hex } = colors
+
+      // set color object to parent handler
+      props.onChange({ rgb, hex, customProps })
+
+      if (onPickEnd) { onPickEnd() }
+    }
+  }, [colors])
+
   // exiting continuous pick when esc key is pressed
-  const exitPick = useCallback(event => {    
-    // console.log("current props.once " + props.once)
-    // console.log("current pickingColorFromDocument" + pickingColorFromDocument)
-    
-    if (event.keyCode === 27) {
-      // console.log("esc key pressed, exiting pick")
+  const exitPick = useCallback(event => {
+    if (event.keyCode === 27) {     
       setPickingColorFromDocument(false)
       setButtonDisabled(false);
       document.body.style.cursor = cursorInactive
     }
   }, [])
 
-  // handles button click to start/stop action
-  const pickColor = () => {
-    const { onPickStart, once } = props
+  // handles button click event to start the action
+  const pickColor = () => {    
+    const { onPickStart } = props
 
-    setButtonDisabled(true)
     if (onPickStart) { onPickStart() }
     document.body.style.cursor = cursorActive;
     setPickingColorFromDocument(true);
+    setButtonDisabled(true);
   }
 
   const targetToCanvas = (e: *) => {
     html2canvas(document.body)
-      .then((canvasEl) => {     
-        // console.log('canvas captured: ' + canvasEl)
+      .then((canvasEl) => {
+        const { pickRadius } = props
 
-        // stores canvas and click event states to process before next mount
-        setClickEvent(e);
-        setCanvas(canvasEl);
-        // console.log('current canvas state:' + canvas);
+        if (pickRadius) {
+          extractColors(canvasEl, e)
+        } else {
+          extractColor(canvasEl, e)
+        }
       })
 
-    // console.log('in drawing once: ' + props.once)
-
     if (props.once === true || props.once === undefined) {
-      // console.log('turning off single picking')
       setPickingColorFromDocument(false)
       setButtonDisabled(false);
       document.body.style.cursor = cursorInactive
@@ -156,12 +140,13 @@ const EyeDropper = props => {
   }
 
   const extractColor = (canvas: *, e: *) => {
-    // console.log("entering extraColor func");
     const { pageX, pageY } = e
-    // console.log("X-position: " + pageX + "  Y-position: " + pageY);
 
-    let pixelColor = getCanvasPixelColor(canvas, pageX, pageY)
-    updateColors(pixelColor)
+    const pixelColor = getCanvasPixelColor(canvas, pageX, pageY)
+    // console.log(pixelColor);
+
+    const { r, g, b } = pixelColor;
+    updateColors({ r: r, g: g, b: b });
   }
 
   const extractColors = (canvas: *, e: *) => {
@@ -218,16 +203,10 @@ const EyeDropper = props => {
   }
 
   const updateColors = ({ r, g, b }) => {
-    const { onPickEnd } = props
     const rgb = `rgb(${r}, ${g}, ${b})`
     const hex = rgbToHex(r, g, b)
 
-    setColors({ rgb, hex }) 
-    
-    // set color object to parent handler
-    props.onChange({ rgb, hex, customProps})
-
-    if (onPickEnd) { onPickEnd() }
+    setColors({ rgb, hex })
   }
 
   const {
@@ -236,7 +215,7 @@ const EyeDropper = props => {
     customComponent: CustomComponent,
     colorsPassThrough,
     children,
-    customProps,    
+    customProps,
   } = props
 
   const shouldColorsPassThrough = colorsPassThrough ? { [colorsPassThrough]: colors } : {}
@@ -246,9 +225,9 @@ const EyeDropper = props => {
       {CustomComponent ? (
         <CustomComponent
           onClick={pickColor}
-          {...shouldColorsPassThrough}          
+          {...shouldColorsPassThrough}
           customProps={customProps}
-          disabled={buttonDisabled}          
+          disabled={buttonDisabled}
         />
       ) : (
           <button
