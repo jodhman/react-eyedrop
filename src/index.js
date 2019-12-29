@@ -4,6 +4,7 @@ import type, { Node } from 'react'
 import html2canvas from 'html2canvas'
 import getCanvasPixelColor from 'get-canvas-pixel-color'
 
+import getCanvasBlockColors from './getCanvasBlockColors'
 import rgbToHex from './rgbToHex'
 
 const styles = {
@@ -31,7 +32,7 @@ type Props = {
   onPickStart?: Function,
   onPickEnd?: Function,
   colorsPassThrough?: string,
-  pickRadius?: { unit: 'pixel' | 'radius', amount: number }
+  pickRadius?: number
 }
 
 type State = {
@@ -58,8 +59,8 @@ const EyeDropper = props => {
 
     if (onInit) { onInit() }
     if (pickRadius) {
-      if (pickRadius.amount < 1) {
-        throw new Error('Amount should never be below 1.')
+      if (pickRadius < 0 || pickRadius > 450) {
+        throw new Error('pickRadius out of range: 0-450')
       }
     }
   }, []);
@@ -91,7 +92,7 @@ const EyeDropper = props => {
 
   // exiting continuous pick when esc key is pressed
   const exitPick = useCallback(event => {
-    if (event.keyCode === 27) {     
+    if (event.keyCode === 27) {
       setPickingColorFromDocument(false)
       setButtonDisabled(false);
       document.body.style.cursor = cursorInactive
@@ -99,7 +100,7 @@ const EyeDropper = props => {
   }, [])
 
   // handles button click event to start the action
-  const pickColor = () => {    
+  const pickColor = () => {
     const { onPickStart } = props
 
     if (onPickStart) { onPickStart() }
@@ -109,14 +110,14 @@ const EyeDropper = props => {
   }
 
   const targetToCanvas = (e: *) => {
-    html2canvas(document.body, { logging:false })
+    const { pickRadius } = props
+    
+    html2canvas(document.body, { logging: false })
       .then((canvasEl) => {
-        const { pickRadius } = props
-
-        if (pickRadius) {
-          extractColors(canvasEl, e)
-        } else {
+        if (pickRadius === undefined || (pickRadius >= 0 && pickRadius < 1)) {
           extractColor(canvasEl, e)
+        } else {
+          extractColors(canvasEl, e)
         }
       })
 
@@ -129,65 +130,36 @@ const EyeDropper = props => {
 
   const extractColor = (canvas: *, e: *) => {
     const { pageX, pageY } = e
-
     const pixelColor = getCanvasPixelColor(canvas, pageX, pageY)
-    // console.log(pixelColor);
-
     const { r, g, b } = pixelColor;
+
     updateColors({ r: r, g: g, b: b });
   }
 
   const extractColors = (canvas: *, e: *) => {
     const { pageX, pageY } = e
-    const { unit, amount } = props.pickRadius
+    const { pickRadius } = props
 
-    let maxRadius, minRadius
-    if (unit === 'radius') {
-      maxRadius = amount
-      minRadius = -(amount) - 1
-    } else if (unit === 'pixel') {
-      if (amount % 2 !== 0) {
-        maxRadius = ((amount - 1) / 2)
-        minRadius = -((amount - 1) / 2) - 1
-      } else {
-        throw new Error('[EyeDrop] The unit \'pixel\' may only have an odd amount.')
-      }
-    } else {
-      throw new Error('[EyeDrop] Please define a proper unit type.')
-    }
+    const sx = pageX - pickRadius
+    const sy = pageY - pickRadius
+    const sw = pickRadius * 2
+    const sh = pickRadius * 2
 
-    const colorBlock = []
-    let radialOffsetX, radialOffsetY
-
-    for (let x = maxRadius; x !== minRadius; x--) {
-      for (let y = maxRadius; y !== minRadius; y--) {
-        radialOffsetX = (pageX - x)
-        radialOffsetY = (pageY - y)
-
-        if (!(radialOffsetX < 0) && !(radialOffsetY < 0)) {
-          colorBlock.push(getCanvasPixelColor(canvas, radialOffsetX, radialOffsetY))
-        }
-      }
-    }
-    calcAverageColor(colorBlock)
+    const colorBlock = getCanvasBlockColors(canvas, sx, sy, sw, sh);
+    calcAverageColor(colorBlock);
   }
 
   const calcAverageColor = (colorBlock: Array<{ r: number, g: number, b: number }>) => {
-    let totalR = 0, totalG = 0, totalB = 0
-    colorBlock.map(({ r, g, b }, index) => {
-      totalR += r * r
-      totalG += g * g
-      totalB += b * b
-      if (index !== 0) {
-        totalR = Math.sqrt(totalR / 2)
-        totalG = Math.sqrt(totalG / 2)
-        totalB = Math.sqrt(totalB / 2)
-      }
-    })
-    const averageR = parseInt(totalR)
-    const averageG = parseInt(totalG)
-    const averageB = parseInt(totalB)
-    updateColors({ r: averageR, g: averageG, b: averageB })
+    const totalPixels = colorBlock.length
+
+    const rgbAverage = colorBlock.reduce((rgbAcc, colorsObj) => {
+      rgbAcc[0] += colorsObj.r
+      rgbAcc[1] += colorsObj.g
+      rgbAcc[2] += colorsObj.b
+      return rgbAcc
+    }, [0, 0, 0]).map(acc => Math.round(acc / totalPixels))
+
+    updateColors({ r: rgbAverage[0], g: rgbAverage[1], b: rgbAverage[2] })
   }
 
   const updateColors = ({ r, g, b }) => {

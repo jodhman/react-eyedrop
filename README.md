@@ -147,33 +147,15 @@ const Button = ({ onClick, disabled }) =>
 
 # <a name="api-pickRadius"></a>
 #### **pickRadius**
-###### Expects `object` with the following form:
-```
-{
-    unit: 'radius' | 'pixel',
-    amount: number
-}
-```
-###### *If you want to change the default 1x1 pixel selection, here's where you do it.*
-###### For `unit`, choose either *'radius'* or *'pixel'*
+###### Expects `number` 
+###### *Size of the pick, defined in radius. Final value will be the average of the sum of all the color pixel within the radius.*
+###### *radius = 1 <=> 3 x 3 block <=> 9 pixels*
+###### *radius = 2 <=> 5 x 5 block <=> 25 pixels*
+###### *radius = 3 <=> 7 x 7 block <=> 49 pixels*
+
 *Example:*
 ```
-<EyeDropper pickRadius={{ unit: 'pixel', amount: 3 }} />
-/* This will result in 3x3 equals 9 pixels which the average color will be generated from. */
-<EyeDropper pickRadius={{ unit: 'pixel', amount: 5 }} />
-/* 5x5 */
-<EyeDropper pickRadius={{ unit: 'pixel', amount: 7 }} />
-/* 7x7 */
-/* note: unit type 'pixel' only works with an odd amount */
-
-/* or */
-
-<EyeDropper pickRadius={{ unit: 'radius', amount: 1 }} />
-/* This will result in 3x3 equals 9 pixels. */
-<EyeDropper pickRadius={{ unit: 'radius', amount: 2 }} />
-/* This will result in 5x5 equals 25 pixels. */
-<EyeDropper pickRadius={{ unit: 'radius', amount: 3 }} />
-/* This will result in 7x7 equals 49 pixels. */
+<EyeDropper pickRadius={{ 1 }} />
 ```
 
 # <a name="api-cursorActive"></a>
