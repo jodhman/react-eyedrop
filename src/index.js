@@ -84,9 +84,9 @@ const EyeDropper = props => {
 
   // setup listener for the esc key 
   useEffect(() => {
-    window.addEventListener('keydown', exitPick)
+    document.addEventListener('keydown', exitPick)
     return () => {
-      document.addEventListener('keydown', exitPick);
+      document.removeEventListener('keydown', exitPick);
     }
   }, [exitPick])
 
