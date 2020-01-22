@@ -70,7 +70,7 @@ const EyeDropper = props => {
     // setting "props.once" property
     let once;
     if (typeof props.once !== "undefined") { once = props.once }
-    else { once = true; } // set default to true
+    else { once = true } // set default to true
 
     if (pickingColorFromDocument) {
       document.addEventListener("click", targetToCanvas)
