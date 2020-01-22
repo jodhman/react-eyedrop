@@ -68,7 +68,7 @@ const EyeDropper = props => {
   // setup listener for canvas picking click
   useEffect(() => {
     // setting "props.once" property
-    let once;
+    let once
     if (typeof props.once !== "undefined") { once = props.once }
     else { once = true } // set default to true
 
