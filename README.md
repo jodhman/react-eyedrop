@@ -149,7 +149,7 @@ const Button = ({ onClick, disabled }) =>
 #### **pickRadius**
 ###### Expects `number` 
 ###### Range `0-450`
-###### *Size of the pick, defined in radius. Final value will be the average of the sum of all the color pixel within the radius.*
+###### *Size of the pick radius. The final value will be the average sum of all the pixels within the radius.*
 ###### *radius = 1 <=> 3 x 3 blocks <=> 9 pixels*
 ###### *radius = 2 <=> 5 x 5 blocks <=> 25 pixels*
 ###### *radius = 3 <=> 7 x 7 blocks <=> 49 pixels*
