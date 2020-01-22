@@ -4,7 +4,7 @@ import type, { Node } from 'react'
 import html2canvas from 'html2canvas'
 import getCanvasPixelColor from 'get-canvas-pixel-color'
 
-import getCanvasBlockColors from './getCanvasBlockColors'
+import { getCanvasBlockColors } from './getCanvasBlockColors'
 import rgbToHex from './rgbToHex'
 
 const styles = {
@@ -32,7 +32,8 @@ type Props = {
   onPickStart?: Function,
   onPickEnd?: Function,
   colorsPassThrough?: string,
-  pickRadius?: number
+  pickRadius?: number,
+  disabled?: boolean
 }
 
 type State = {
@@ -44,7 +45,7 @@ type State = {
   buttonDisabled: boolean
 }
 
-const EyeDropper = props => {
+export const EyeDropper = props => {
 
   const [colors, setColors] = useState({ rgb: '', hex: '' });
   const [pickingColorFromDocument, setPickingColorFromDocument] = useState(false);
@@ -106,7 +107,12 @@ const EyeDropper = props => {
     if (onPickStart) { onPickStart() }
     document.body.style.cursor = cursorActive;
     setPickingColorFromDocument(true);
-    setButtonDisabled(true);
+    // user declared "disabled" property
+    if (disabled === false) {
+      setButtonDisabled(disabled);
+    } else {
+      setButtonDisabled(true);
+    }  
   }
 
   const targetToCanvas = (e: *) => {
@@ -140,12 +146,12 @@ const EyeDropper = props => {
     const { pageX, pageY } = e
     const { pickRadius } = props
 
-    const sx = pageX - pickRadius
-    const sy = pageY - pickRadius
-    const sw = pickRadius * 2
-    const sh = pickRadius * 2
+    const startingX = pageX - pickRadius
+    const startingY = pageY - pickRadius
+    const pickWidth = pickRadius * 2
+    const pickHeight = pickRadius * 2
 
-    const colorBlock = getCanvasBlockColors(canvas, sx, sy, sw, sh);
+    const colorBlock = getCanvasBlockColors(canvas, startingX, startingY, pickWidth, pickHeight);
     calcAverageColor(colorBlock);
   }
 
@@ -181,6 +187,7 @@ const EyeDropper = props => {
     customComponent: CustomComponent,
     colorsPassThrough,
     children,
+    disabled,
     customProps,
   } = props
 
@@ -208,5 +215,3 @@ const EyeDropper = props => {
     </div>
   )
 }
-
-export default EyeDropper;

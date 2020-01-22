@@ -1,5 +1,5 @@
 // returns an array of rgb objects [{r:10, g:10, b:10}]
-const getCanvasBlockColors = (canvas, sx, sy, sw, sh) => {
+export const getCanvasBlockColors = (canvas, sx, sy, sw, sh) => {
     if (!canvas.getContext) {
         throw new Error("Input element is not a canvas")
     }
@@ -24,5 +24,3 @@ const getCanvasBlockColors = (canvas, sx, sy, sw, sh) => {
     }
     return colorBlock;
 }
-
-export default getCanvasBlockColors;
