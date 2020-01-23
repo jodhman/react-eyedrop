@@ -133,7 +133,6 @@ export const EyeDropper = (props: Props) => {
       const canvasElement = document.createElement('canvas')
       canvasElement.width = eTarget.width
       canvasElement.height = eTarget.height
-      document.body.append(canvasElement)
       const context = canvasElement.getContext('2d')
       context.drawImage(eTarget, 0, 0, eTarget.width, eTarget.height)
       extractColorFromImage(canvasElement, e)
