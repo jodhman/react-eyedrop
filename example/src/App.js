@@ -1,8 +1,8 @@
 import React from 'react'
 import { hot } from 'react-hot-loader'
-import EyeDropper from './eyedrop'
 
 import './App.css'
+import { EyeDropper } from './eyedrop'
 
 class App extends React.Component {
   constructor() {

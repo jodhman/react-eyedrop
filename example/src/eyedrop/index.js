@@ -36,20 +36,15 @@ type Props = {
   disabled?: boolean
 }
 
-type State = {
-  colors: {
-    rgb: string,
-    hex: string
-  },
-  pickingColorFromDocument: boolean,
-  buttonDisabled: boolean
+type Colors = {
+  rgb: string,
+  hex: string
 }
 
-export const EyeDropper = props => {
-
-  const [colors, setColors] = useState({ rgb: '', hex: '' });
-  const [pickingColorFromDocument, setPickingColorFromDocument] = useState(false);
-  const [buttonDisabled, setButtonDisabled] = useState(false);
+export const EyeDropper = (props: Props) => {
+  const [colors, setColors] = useState<Colors>({ rgb: '', hex: '' });
+  const [pickingColorFromDocument, setPickingColorFromDocument] = useState<boolean>(false);
+  const [buttonDisabled, setButtonDisabled] = useState<boolean>(false);
 
   const cursorActive = props.cursorActive ? props.cursorActive : 'copy'
   const cursorInactive = props.cursorInactive ? props.cursorInactive : 'auto'
@@ -117,11 +112,24 @@ export const EyeDropper = props => {
 
   const targetToCanvas = (e: *) => {
     const { pickRadius } = props
-    
-    html2canvas(document.body, { logging: false })
+    const eTarget = e.target
+
+    if(e.target.nodeName.toLowerCase() === 'img') {
+      // Handle edge-case, images, because html2canvas can not
+      const canvasElement = document.createElement('canvas')
+      canvasElement.width = eTarget.width
+      canvasElement.height = eTarget.height
+      document.body.append(canvasElement)
+      const context = canvasElement.getContext('2d')
+      context.drawImage(eTarget, 0, 0, eTarget.width, eTarget.height)
+      extractColorFromImage(canvasElement, e)
+      return
+    }
+
+    html2canvas(e.target, { logging: false })
       .then((canvasEl) => {
         if (pickRadius === undefined || (pickRadius >= 0 && pickRadius < 1)) {
-          extractColor(canvasEl, e)
+          extractColorFromPage(canvasEl, e)
         } else {
           extractColors(canvasEl, e)
         }
@@ -133,13 +141,21 @@ export const EyeDropper = props => {
       document.body.style.cursor = cursorInactive
     }
   }
+  
+  const extractColorFromImage = (canvas: *, e: *) => {
+    const { offsetX, offsetY } = e
+    const pixelColor = getCanvasPixelColor(canvas, offsetX, offsetY)
+    const { r, g, b } = pixelColor
+  
+    updateColors({ r, g, b })
+  }
 
-  const extractColor = (canvas: *, e: *) => {
+  const extractColorFromPage = (canvas: *, e: *) => {
     const { pageX, pageY } = e
     const pixelColor = getCanvasPixelColor(canvas, pageX, pageY)
-    const { r, g, b } = pixelColor;
+    const { r, g, b } = pixelColor
 
-    updateColors({ r: r, g: g, b: b });
+    updateColors({ r, g, b })
   }
 
   const extractColors = (canvas: *, e: *) => {
