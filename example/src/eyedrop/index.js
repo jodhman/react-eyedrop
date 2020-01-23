@@ -1,8 +1,12 @@
 // @flow
-import React, { useState, useEffect, useCallback } from 'react'
-import type, { Node } from 'react'
-import html2canvas from 'html2canvas'
 import getCanvasPixelColor from 'get-canvas-pixel-color'
+import html2canvas from 'html2canvas'
+import React, {
+  Node,
+  useCallback,
+  useEffect,
+  useState
+} from 'react'
 
 import { getCanvasBlockColors } from './getCanvasBlockColors'
 import rgbToHex from './rgbToHex'
