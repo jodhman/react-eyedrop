@@ -239,6 +239,8 @@ npm run test
 
 ## Release History
 
+* 3.4.2
+    * Now supports color-picking images presented through `img` tags on the DOM
 * 3.0.0
     * Updated pickRadius feature to work with different units; radius & pixel.
 * 2.1.2
