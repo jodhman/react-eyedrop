@@ -10,6 +10,7 @@ import React, {
 
 import { getCanvasBlockColors } from './getCanvasBlockColors'
 import rgbToHex from './rgbToHex'
+import { validatePickRadius } from './validatePickRadius'
 
 const styles = {
   eyedropperWrapper: {
@@ -45,9 +46,9 @@ type Colors = {
 }
 
 export const EyeDropper = (props: Props) => {
-  const [colors, setColors] = useState<Colors>({ rgb: '', hex: '' });
-  const [pickingColorFromDocument, setPickingColorFromDocument] = useState<boolean>(false);
-  const [buttonDisabled, setButtonDisabled] = useState<boolean>(false);
+  const [colors, setColors] = useState<Colors>({ rgb: '', hex: '' })
+  const [pickingColorFromDocument, setPickingColorFromDocument] = useState<boolean>(false)
+  const [buttonDisabled, setButtonDisabled] = useState<boolean>(false)
   
   const cursorActive = props.cursorActive ? props.cursorActive : 'copy'
   const cursorInactive = props.cursorInactive ? props.cursorInactive : 'auto'
@@ -57,12 +58,9 @@ export const EyeDropper = (props: Props) => {
     const { onInit, pickRadius } = props
     
     if (onInit) { onInit() }
-    if (pickRadius) {
-      if (pickRadius < 0 || pickRadius > 450) {
-        throw new Error('pickRadius out of range: 0-450')
-      }
-    }
-  }, []);
+    
+    pickRadius && validatePickRadius(pickRadius)
+  }, [])
   
   // setup listener for canvas picking click
   useEffect(() => {
