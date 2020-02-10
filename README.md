@@ -224,18 +224,20 @@ npm run test
 
 ## Release History
 
+* 4.0.0
+    * Removed property `onPickEnd` since same functionality can be achieved with handleChange
 * 3.4.2
     * Now supports color-picking images presented through `img` tags on the DOM
 * 3.0.0
-    * Updated pickRadius feature to work with different units; radius & pixel.
+    * Updated `pickRadius` feature to work with different units; radius & pixel.
 * 2.1.2
     * Fixed typo in documentation
 * 2.1.1
-    * Added pickRadius feature
+    * Added `pickRadius` feature
 * 2.0.1
     * Updated documentation
 * 2.0.0
-    * Changed prop name from buttonComponent to customComponent
+    * Changed prop name from `buttonComponent` to `customComponent`
 * 1.0.0
     * Initial release
 
