@@ -1,5 +1,4 @@
 // @flow
-import getCanvasPixelColor from 'get-canvas-pixel-color'
 import html2canvas from 'html2canvas'
 import React, {
   Node,
@@ -7,8 +6,10 @@ import React, {
   useEffect,
   useState
 } from 'react'
+import { extractColor } from './extractColor'
 
 import { getCanvasBlockColors } from './getCanvasBlockColors'
+import { imageToCanvas } from './imageToCanvas'
 import rgbToHex from './rgbToHex'
 import { validatePickRadius } from './validatePickRadius'
 
@@ -19,7 +20,7 @@ const styles = {
   eyedropperWrapperButton: {
     backgroundColor: '#000000',
     color: '#ffffff',
-    border: 'none',
+    border: '1px solid #ffffff',
     borderRadius: '20%',
     padding: '10px 25px',
   }
@@ -50,39 +51,12 @@ export const EyeDropper = (props: Props) => {
   const [pickingColorFromDocument, setPickingColorFromDocument] = useState<boolean>(false)
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(false)
   
+  const {
+    once = true
+  } = props
+  
   const cursorActive = props.cursorActive ? props.cursorActive : 'copy'
   const cursorInactive = props.cursorInactive ? props.cursorInactive : 'auto'
-  
-  // initial stage of life cycle, catching errors
-  useEffect(() => {
-    const { onInit, pickRadius } = props
-    
-    if (onInit) { onInit() }
-    
-    pickRadius && validatePickRadius(pickRadius)
-  }, [])
-  
-  // setup listener for canvas picking click
-  useEffect(() => {
-    const once = props.once || true
-    
-    if (pickingColorFromDocument) {
-      document.addEventListener("click", targetToCanvas)
-    }
-    return () => {
-      if (once || pickingColorFromDocument) {
-        document.removeEventListener("click", targetToCanvas)
-      }
-    }
-  }, [pickingColorFromDocument, props.once])
-  
-  // setup listener for the esc key
-  useEffect(() => {
-    document.addEventListener('keydown', exitPick)
-    return () => {
-      document.removeEventListener('keydown', exitPick)
-    }
-  }, [exitPick])
   
   // exiting continuous pick when esc key is pressed
   const exitPick = useCallback(event => {
@@ -101,63 +75,42 @@ export const EyeDropper = (props: Props) => {
     } = props
     
     if (onPickStart) { onPickStart() }
+    
     document.body.style.cursor = cursorActive
     setPickingColorFromDocument(true)
-    // user declared "disabled" property
-    if (disabled === false) {
-      setButtonDisabled(disabled)
-    } else {
-      setButtonDisabled(true)
-    }
+    setButtonDisabled(disabled ? disabled : true)
   }
   
   const targetToCanvas = (e: *) => {
     const { pickRadius } = props
-    const eTarget = e.target
+    const eventTarget = e.target
     
     if(e.target.nodeName.toLowerCase() === 'img') {
-      // Handle edge-case, images, because html2canvas can not
-      const canvasElement = document.createElement('canvas')
-      canvasElement.width = eTarget.width
-      canvasElement.height = eTarget.height
-      const context = canvasElement.getContext('2d')
-      context.drawImage(eTarget, 0, 0, eTarget.width, eTarget.height)
-      extractColorFromImage(canvasElement, e)
-      props.once === true && deactivateColorPicking()
+      // Convert image to canvas because `html2canvas` can not
+      const canvasElement = imageToCanvas(eventTarget)
+      const { r, g, b } = extractColor(canvasElement, e.offsetX, e.offsetY)
+      updateColors({ r, g, b })
+      once === true && deactivateColorPicking()
       return
     }
     
     html2canvas(e.target, { logging: false })
     .then((canvasEl) => {
-      if (pickRadius === undefined || (pickRadius >= 0 && pickRadius < 1)) {
-        extractColorFromPage(canvasEl, e)
+      if (pickRadius === undefined || pickRadius === 0) {
+        const { r, g, b } = extractColor(canvasEl, e.pageX, e.pageY)
+        updateColors({ r, g, b })
       } else {
         extractColors(canvasEl, e)
       }
     })
     
-    props.once === true && deactivateColorPicking()
+    once === true && deactivateColorPicking()
   }
   
   const deactivateColorPicking = () => {
     setPickingColorFromDocument(false)
     setButtonDisabled(false)
     document.body.style.cursor = cursorInactive
-  }
-  
-  const extractColorFromImage = (canvas: *, e: *) => {
-    const { offsetX, offsetY } = e
-    const pixelColor = getCanvasPixelColor(canvas, offsetX, offsetY)
-    const { r, g, b } = pixelColor
-    
-    updateColors({ r, g, b })
-  }
-  
-  const extractColorFromPage = (canvas: *, e: *) => {
-    const { pageX, pageY } = e
-    const { r, g, b } = getCanvasPixelColor(canvas, pageX, pageY)
-    
-    updateColors({ r, g, b })
   }
   
   const extractColors = (canvas: *, e: *) => {
@@ -199,6 +152,34 @@ export const EyeDropper = (props: Props) => {
     setColors({ rgb, hex })
   }
   
+  // initial stage of life cycle, catching errors
+  useEffect(() => {
+    const { onInit, pickRadius } = props
+    
+    if (onInit) { onInit() }
+    
+    pickRadius && validatePickRadius(pickRadius)
+  }, [])
+  
+  // setup listener for canvas picking click
+  useEffect(() => {
+    if (pickingColorFromDocument) {
+      document.addEventListener("click", targetToCanvas)
+    }
+    return () => {
+      if (once || pickingColorFromDocument) {
+        document.removeEventListener("click", targetToCanvas)
+      }
+    }
+  }, [pickingColorFromDocument, once])
+  
+  // setup listener for the esc key
+  useEffect(() => {
+    document.addEventListener('keydown', exitPick)
+    return () => {
+      document.removeEventListener('keydown', exitPick)
+    }
+  }, [exitPick])
   
   const {
     wrapperClasses,

@@ -48,7 +48,7 @@ class App extends React.Component {
         <div className="upload-image">
           {image ? (
             <div className="eyedrop-wrapper">
-              <EyeDropper once={eyedropOnce} onChange={this.handleChangeColor} />
+              <EyeDropper once={eyedropOnce} onChange={this.handleChangeColor}>Pick Color</EyeDropper>
               <p>Once: {eyedropOnce.toString()}</p>
               <button onClick={this.toggleOnce}>Toggle `once` prop</button>
               <div style={{ backgroundColor: rgb }} className="eyedrop-color" />
