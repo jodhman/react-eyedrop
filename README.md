@@ -44,7 +44,6 @@ yarn add react-eyedrop
 **[cursorInactive](#api-cursorInactive)** <br>
 **[onInit](#api-onInit)** <br>
 **[onPickStart](#api-onPickStart)** <br>
-**[onPickEnd](#api-onPickEnd)** <br>
 
 # <a name="api-onChange"></a>
 #### **onChange**
@@ -207,20 +206,6 @@ function getBananas() {
 <!-------->
 <EyeDropper onPickStart={getBananas} />
 /* Will be called when starting to EyeDrop */
-```
-
-# <a name="api-onPickEnd"></a>
-#### **onPickEnd**
-###### Expects `function`
-###### *Callback for when finished EyeDropping*
-*Example:*
-```
-function byeNow() {
-    console.log('Stay sharp, journeyman!')
-}
-<!-------->
-<EyeDropper onPickEnd={byeNow} />
-/* Will be called when finished EyeDropping */
 ```
 
 ## Development setup
