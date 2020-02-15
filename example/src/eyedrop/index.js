@@ -6,12 +6,15 @@ import React, {
   useState
 } from 'react'
 import type { AbstractComponent, Node } from 'react'
-import { extractColor } from './extractColor'
+import { calcAverageColor } from './calc-average-color'
+import { extractColors } from './extract-colors'
+import { extractColor } from './extract-color'
 
-import { getCanvasBlockColors } from './getCanvasBlockColors'
-import { imageToCanvas } from './imageToCanvas'
-import rgbToHex from './rgbToHex'
-import { validatePickRadius } from './validatePickRadius'
+import { getCanvasBlockColors } from './get-canvas-block-colors'
+import { imageToCanvas } from './image-to-canvas'
+import { parseRGB } from './parse-rgb'
+import rgbToHex from './rgb-to-hex'
+import { validatePickRadius } from './validate-pick-radius'
 
 const styles = {
   eyedropperWrapper: {
@@ -108,44 +111,22 @@ export const EyeDropper = (props: Props) => {
         const { r, g, b } = extractColor(canvasEl, pageX, pageY)
         updateColors({ r, g, b })
       } else {
-        extractColors(canvasEl, e)
+        const { pageX, pageY } = e
+        const colorBlock = extractColors(canvasEl, pickRadius, pageX, pageY)
+        const rgbColor = calcAverageColor(colorBlock)
+        updateColors(rgbColor)
       }
     })
     
     once === true && deactivateColorPicking()
   }
   
-  const extractColors = (canvas: *, e: *) => {
-    const { pageX, pageY } = e
-    
-    const startingX = pageX - pickRadius
-    const startingY = pageY - pickRadius
-    const pickWidth = pickRadius * 2
-    const pickHeight = pickRadius * 2
-    
-    const colorBlock = getCanvasBlockColors(canvas, startingX, startingY, pickWidth, pickHeight)
-    calcAverageColor(colorBlock)
-  }
-  
-  const calcAverageColor = (colorBlock: Array<{ r: number, g: number, b: number }>) => {
-    const totalPixels = colorBlock.length
-    
-    const rgbAverage = colorBlock.reduce((rgbAcc, colorsObj) => {
-      rgbAcc[0] += Math.round(colorsObj.r / totalPixels)
-      rgbAcc[1] += Math.round(colorsObj.g / totalPixels)
-      rgbAcc[2] += Math.round(colorsObj.b / totalPixels)
-      return rgbAcc
-    }, [0, 0, 0])
-    
-    updateColors({ r: rgbAverage[0], g: rgbAverage[1], b: rgbAverage[2] })
-  }
-  
-  const updateColors = ({ r, g, b }) => {
+  const updateColors = (rgbObj: { r: number, g: number, b: number }) => {
     const {
       onChange
     } = props
-    const rgb = `rgb(${r}, ${g}, ${b})`
-    const hex = rgbToHex(r, g, b)
+    const rgb = parseRGB(rgbObj)
+    const hex = rgbToHex(rgbObj)
     
     // set color object to parent handler
     onChange({ rgb, hex, customProps })
