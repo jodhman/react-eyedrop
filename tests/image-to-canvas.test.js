@@ -1,4 +1,5 @@
 import React from 'react'
+import { ERROR_MSGS } from '../src/constants/errors'
 import { imageToCanvas } from '../src/image-to-canvas'
 
 describe('imageToCanvas should', () => {
@@ -9,6 +10,6 @@ describe('imageToCanvas should', () => {
   
   it('throw if event target is NOT of node type img', () => {
     const divElement = document.createElement('div')
-    expect(() => imageToCanvas(divElement)).toThrow('imageToCanvas: event target not of node type img')
+    expect(() => imageToCanvas(divElement)).toThrow(ERROR_MSGS.imageToCanvas.targetNotImg)
   })
 })

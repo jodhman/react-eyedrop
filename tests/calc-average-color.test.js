@@ -1,4 +1,5 @@
 import { calcAverageColor } from '../src/calc-average-color'
+import { ERROR_MSGS } from '../src/constants/errors'
 
 const black = {
   r: 0,
@@ -30,12 +31,12 @@ describe('calcAverageColor should', () => {
   })
   
   it('throw if 0 pixels in color block', () => {
-    expect(() => calcAverageColor([])).toThrow('calcAverageColor: 0 pixels found')
+    expect(() => calcAverageColor([])).toThrow(ERROR_MSGS.calcAverageColor.noPixelsFound)
   })
   
   it('throw if argument is not array', () => {
-    expect(() => calcAverageColor(black)).toThrow('calcAverageColor: only accepts array of colors')
-    expect(() => calcAverageColor('black')).toThrow('calcAverageColor: only accepts array of colors')
-    expect(() => calcAverageColor(35)).toThrow('calcAverageColor: only accepts array of colors')
+    expect(() => calcAverageColor(black)).toThrow(ERROR_MSGS.calcAverageColor.notArrayOfRgbObj)
+    expect(() => calcAverageColor('black')).toThrow(ERROR_MSGS.calcAverageColor.notArrayOfRgbObj)
+    expect(() => calcAverageColor(35)).toThrow(ERROR_MSGS.calcAverageColor.notArrayOfRgbObj)
   })
 })

@@ -1,3 +1,4 @@
+import { ERROR_MSGS } from '../src/constants/errors'
 import { getCanvasBlockColors } from '../src/get-canvas-block-colors'
 
 describe('getCanvasBlockColors should', () => {
@@ -16,6 +17,6 @@ describe('getCanvasBlockColors should', () => {
   
   it('throw if given element is not of type canvas', () => {
     const div = document.createElement('div')
-    expect(() => getCanvasBlockColors(div, 10, 10, 10, 10)).toThrow('getCanvasBlockColors: element is not of type canvas')
+    expect(() => getCanvasBlockColors(div, 10, 10, 10, 10)).toThrow(ERROR_MSGS.getCanvasBlockColors.elementNotCanvas)
   })
 })

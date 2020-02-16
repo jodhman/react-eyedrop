@@ -1,14 +1,19 @@
 // @flow
 
+import {
+  VAL_NOT_RGB_OBJ_ARRAY_ERROR,
+  ZERO_PIXELS_FOUND_ERROR
+} from './constants/errors'
+
 export const calcAverageColor = (colorBlock: Array<{ r: number, g: number, b: number }>): { r: number, g: number, b: number } => {
   const totalPixels = colorBlock.length
   
   if(typeof colorBlock !== 'object' || typeof colorBlock.reduce === 'undefined') {
-    throw new Error('calcAverageColor: only accepts array of colors')
+    throw VAL_NOT_RGB_OBJ_ARRAY_ERROR
   }
   
   if(totalPixels === 0) {
-    throw new Error('calcAverageColor: 0 pixels found')
+    throw ZERO_PIXELS_FOUND_ERROR
   }
   
   if(totalPixels === 1) {
