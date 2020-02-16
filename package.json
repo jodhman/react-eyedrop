@@ -57,6 +57,11 @@
       "./setupEnzyme.js",
       "jest-canvas-mock"
     ],
-    "testEnvironment": "jsdom"
+    "testEnvironment": "jsdom",
+    "coverageReporters": [
+      "json-summary",
+      "text",
+      "lcov"
+    ]
   }
 }
