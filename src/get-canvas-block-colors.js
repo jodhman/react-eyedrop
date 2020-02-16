@@ -1,25 +1,39 @@
-export const getCanvasBlockColors = (canvas, sx, sy, sw, sh): Array<{r: number, g: number, b: number}> => {
-  if(!canvas.getContext) {
-    throw new Error("Input element is not a canvas")
-  }
-  
-  const width = canvas.width;
-  const height = canvas.height;
-  
-  const ctx = canvas.getContext('2d');
+// @flow
 
-// do not compute data if they're out of canvas area
-  if (sx < 0) { sx = 0 }
-  if (sy < 0) { sy = 0 }
-  if (sx + sw > width) { sw = width - sx }
-  if (sy + sh > height) { sh = height - sy }
+import { validateCanvasExtractionValues } from './validate-canvas-extraction-values'
+
+export const getCanvasBlockColors = (
+  canvas: HTMLCanvasElement,
+  x: number,
+  y: number,
+  width: number,
+  height: number
+): Array<{r: number, g: number, b: number}> => {
+  if(!canvas.getContext) {
+    throw new Error('getCanvasBlockColors: element is not of type canvas')
+  }
+  const ctx = canvas.getContext('2d')
+
+  const validatedExtractionValues = validateCanvasExtractionValues({
+    x,
+    y,
+    targetHeight: height,
+    targetWidth: width,
+    canvasHeight: canvas.height,
+    canvasWidth: canvas.width
+  })
   
-  const imageData = ctx.getImageData(sx, sy, sw, sh).data
-  
+  const imageData = ctx.getImageData(
+    validatedExtractionValues.x,
+    validatedExtractionValues.y,
+    validatedExtractionValues.targetWidth,
+    validatedExtractionValues.targetHeight
+  ).data
+
   let colorBlock = []
   for (let i = 0; i < imageData.length; i += 4) {
     const [r, g, b, a] = imageData.slice(i, i + 4)
-    colorBlock.push({ r: r, g: g, b: b });
+    colorBlock.push({ r: r, g: g, b: b })
   }
-  return colorBlock;
+  return colorBlock
 }
