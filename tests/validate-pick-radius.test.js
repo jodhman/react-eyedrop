@@ -12,4 +12,8 @@ describe('validatePickRadius should', () => {
   it(`throw if pick radius is more than ${MAXIMUM_PICK_RADIUS}`, () => {
     expect(() => validatePickRadius(460)).toThrow('Property `pickRadius` out of bounds: please choose a value between 0 - 450.')
   })
+  
+  it('do nothing if pick radius is valid', () => {
+    expect(validatePickRadius(200)).toBe(undefined)
+  })
 })

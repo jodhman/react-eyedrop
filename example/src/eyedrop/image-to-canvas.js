@@ -1,6 +1,9 @@
 // @flow
 
-export const imageToCanvas = (eventTarget: *) => {
+export const imageToCanvas = (eventTarget: HTMLImageElement) => {
+  if(eventTarget.nodeName !== 'IMG') {
+    throw new Error('imageToCanvas: event target not of node type img')
+  }
   const canvasElement = document.createElement('canvas')
   canvasElement.width = eventTarget.width
   canvasElement.height = eventTarget.height
