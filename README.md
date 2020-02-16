@@ -224,6 +224,8 @@ npm run test
 
 ## Release History
 
+* 4.1.0
+    * 100% Unit Test Coverage
 * 4.0.0
     * Removed property `onPickEnd` since same functionality can be achieved with handleChange
 * 3.4.2
