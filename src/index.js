@@ -1,5 +1,6 @@
 // @flow
 import html2canvas from 'html2canvas'
+import getCanvasPixelColor from 'get-canvas-pixel-color'
 import React, {
   useCallback,
   useEffect,
@@ -8,12 +9,9 @@ import React, {
 import type { AbstractComponent, Node } from 'react'
 import { calcAverageColor } from './calc-average-color'
 import { extractColors } from './extract-colors'
-import { extractColor } from './extract-color'
-
-import { getCanvasBlockColors } from './get-canvas-block-colors'
 import { imageToCanvas } from './image-to-canvas'
 import { parseRGB } from './parse-rgb'
-import rgbToHex from './rgb-to-hex'
+import { rgbToHex } from './rgb-to-hex'
 import { validatePickRadius } from './validate-pick-radius'
 
 const styles = {
@@ -98,7 +96,7 @@ export const EyeDropper = (props: Props) => {
       // Convert image to canvas because `html2canvas` can not
       const { offsetX, offsetY } = e
       const canvasElement = imageToCanvas(target)
-      const { r, g, b } = extractColor(canvasElement, offsetX, offsetY)
+      const { r, g, b } = getCanvasPixelColor(canvasElement, offsetX, offsetY)
       updateColors({ r, g, b })
       once === true && deactivateColorPicking()
       return
@@ -108,7 +106,7 @@ export const EyeDropper = (props: Props) => {
     html2canvas(e.target, { logging: false })
     .then((canvasEl) => {
       if (pickRadius === undefined || pickRadius === 0) {
-        const { r, g, b } = extractColor(canvasEl, pageX, pageY)
+        const { r, g, b } = getCanvasPixelColor(canvasEl, pageX, pageY)
         updateColors({ r, g, b })
       } else {
         const { pageX, pageY } = e

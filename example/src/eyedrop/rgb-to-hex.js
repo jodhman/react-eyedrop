@@ -1,21 +1,21 @@
 // @flow
 
-export default (rgbObj: {r: number, g: number, b: number}) => {
-  const {
-    r,
-    g,
-    b
-  } = rgbObj
-  const red = rgbToHex(r)
-  const green = rgbToHex(g)
-  const blue = rgbToHex(b)
-  return `#${red}${green}${blue}`
-}
-
-export const rgbToHex = (rgb: number) => {
+const numberToHex = (rgb: number) => {
   let hex = rgb.toString(16)
   if (hex.length < 2) {
     hex = `0${hex}`
   }
   return hex
+}
+
+export const rgbToHex = (rgbObj: {r: number, g: number, b: number}) => {
+  const {
+    r,
+    g,
+    b
+  } = rgbObj
+  const red = numberToHex(r)
+  const green = numberToHex(g)
+  const blue = numberToHex(b)
+  return `#${red}${green}${blue}`
 }
