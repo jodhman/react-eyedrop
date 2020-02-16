@@ -1,6 +1,7 @@
 // @flow
 
 import { ELEMENT_NOT_CANVAS_ERROR } from './constants/errors'
+import type { RgbObj } from './types'
 import { validateCanvasExtractionValues } from './validate-canvas-extraction-values'
 
 export const getCanvasBlockColors = (
@@ -9,7 +10,7 @@ export const getCanvasBlockColors = (
   y: number,
   width: number,
   height: number
-): Array<{r: number, g: number, b: number}> => {
+): Array<RgbObj> => {
   if(!canvas.getContext) {
     throw ELEMENT_NOT_CANVAS_ERROR
   }

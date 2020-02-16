@@ -12,6 +12,7 @@ import { extractColors } from './extract-colors'
 import { imageToCanvas } from './image-to-canvas'
 import { parseRGB } from './parse-rgb'
 import { rgbToHex } from './rgb-to-hex'
+import type { RgbObj } from './types'
 import { validatePickRadius } from './validate-pick-radius'
 
 const styles = {
@@ -44,13 +45,14 @@ type Props = {
   customProps?: { [key: string]: any }
 }
 
-type Colors = {
+type StateColors = {
   rgb: string,
   hex: string
 }
+const initialStateColors = { rgb: '', hex: '' }
 
 export const EyeDropper = (props: Props) => {
-  const [colors, setColors] = useState<Colors>({ rgb: '', hex: '' })
+  const [colors, setColors] = useState<StateColors>(initialStateColors)
   const [pickingColorFromDocument, setPickingColorFromDocument] = useState<boolean>(false)
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(false)
   
@@ -119,7 +121,7 @@ export const EyeDropper = (props: Props) => {
     once === true && deactivateColorPicking()
   }
   
-  const updateColors = (rgbObj: { r: number, g: number, b: number }) => {
+  const updateColors = (rgbObj: RgbObj) => {
     const {
       onChange
     } = props

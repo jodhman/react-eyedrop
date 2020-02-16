@@ -1,3 +1,5 @@
 // @flow
 
-export const parseRGB = ({ r, g, b }: { r: number, g: number, b: number }) => `rgb(${r}, ${g}, ${b})`
+import type { RgbObj } from './types'
+
+export const parseRGB = ({ r, g, b }: RgbObj) => `rgb(${r}, ${g}, ${b})`
