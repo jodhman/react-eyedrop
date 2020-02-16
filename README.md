@@ -1,4 +1,8 @@
 # React EyeDrop
+![](coverage/badge-branches.svg)
+![](coverage/badge-functions.svg)
+![](coverage/badge-lines.svg)
+![](coverage/badge-statements.svg)
 > A highly customizable, flow-typed color eye-dropper for your React project.
 <!--
 [![](https://img.shields.io/bundlephobia/min/react-eyedrop.svg)](https://bundlephobia.com/result?p=react-eyedrop@1.0.0)
