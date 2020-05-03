@@ -228,6 +228,8 @@ npm run test
 
 ## Release History
 
+* 4.1.2
+    * No longer inline styling
 * 4.1.1
     * Added Unit test Coverage badges in README
 * 4.1.0

@@ -182,15 +182,25 @@ export const EyeDropper = (props: Props) => {
           disabled={buttonDisabled}
         />
       ) : (
-        <button
-          id={'react-eyedrop-button'}
-          style={styles.eyedropperWrapperButton}
-          className={buttonClasses}
-          onClick={pickColor}
-          disabled={buttonDisabled}
-        >
-          {children}
-        </button>
+        <>
+          <style dangerouslySetInnerHTML={{__html: `
+            .react-eyedrop-button {
+              background-color: #000000;
+              color: #ffffff;
+              border: 1px solid #ffffff;
+              border-radius: 20%;
+              padding: 10px 25px;
+            }
+          `}} />
+          <button
+            id={'react-eyedrop-button'}
+            className={`react-eyedrop-button ${buttonClasses || ''}`}
+            onClick={pickColor}
+            disabled={buttonDisabled}
+          >
+            {children}
+          </button>
+        </>
       )}
     </div>
   )

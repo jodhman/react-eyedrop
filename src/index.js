@@ -15,19 +15,6 @@ import { rgbToHex } from './rgb-to-hex'
 import type { RgbObj } from './types'
 import { validatePickRadius } from './validate-pick-radius'
 
-const styles = {
-  eyedropperWrapper: {
-    position: 'relative'
-  },
-  eyedropperWrapperButton: {
-    backgroundColor: '#000000',
-    color: '#ffffff',
-    border: '1px solid #ffffff',
-    borderRadius: '20%',
-    padding: '10px 25px',
-  }
-}
-
 type Props = {
   onChange: Function,
   wrapperClasses?: string,
@@ -103,7 +90,7 @@ export const EyeDropper = (props: Props) => {
       once === true && deactivateColorPicking()
       return
     }
-  
+    
     const { pageX, pageY } = e
     html2canvas(e.target, { logging: false })
     .then((canvasEl) => {
@@ -173,25 +160,42 @@ export const EyeDropper = (props: Props) => {
   } = props
   const shouldColorsPassThrough = colorsPassThrough ? { [colorsPassThrough]: colors } : {}
   return (
-    <div style={styles.eyedropperWrapper} className={wrapperClasses}>
-      {CustomComponent ? (
-        <CustomComponent
-          onClick={pickColor}
-          {...shouldColorsPassThrough}
-          customProps={customProps}
-          disabled={buttonDisabled}
-        />
-      ) : (
-        <button
-          id={'react-eyedrop-button'}
-          style={styles.eyedropperWrapperButton}
-          className={buttonClasses}
-          onClick={pickColor}
-          disabled={buttonDisabled}
-        >
-          {children}
-        </button>
-      )}
-    </div>
+    <>
+      <style dangerouslySetInnerHTML={{__html: `
+        .react-eyedrop-wrapper {
+          position: relative;
+        }
+      `}} />
+      <div className={`react-eyedrop-wrapper ${wrapperClasses || ''}`}>
+        {CustomComponent ? (
+          <CustomComponent
+            onClick={pickColor}
+            {...shouldColorsPassThrough}
+            customProps={customProps}
+            disabled={buttonDisabled}
+          />
+        ) : (
+          <>
+            <style dangerouslySetInnerHTML={{__html: `
+              .react-eyedrop-button {
+                background-color: #000000;
+                color: #ffffff;
+                border: 1px solid #ffffff;
+                border-radius: 20%;
+                padding: 10px 25px;
+              }
+            `}} />
+            <button
+              id={'react-eyedrop-button'}
+              className={`react-eyedrop-button ${buttonClasses || ''}`}
+              onClick={pickColor}
+              disabled={buttonDisabled}
+            >
+              {children}
+            </button>
+          </>
+        )}
+      </div>
+    </>
   )
 }
