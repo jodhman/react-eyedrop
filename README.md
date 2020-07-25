@@ -228,6 +228,8 @@ npm run test
 
 ## Release History
 
+* 4.1.3
+    * Bug fix related to color picking from the correct target
 * 4.1.2
     * No longer inline styling
 * 4.1.1
@@ -241,7 +243,7 @@ npm run test
 * 3.0.0
     * Updated `pickRadius` feature to work with different units; radius & pixel.
 * 2.1.2
-    * Fixed typo in documentation
+    * Fixed a typo in documentation
 * 2.1.1
     * Added `pickRadius` feature
 * 2.0.1

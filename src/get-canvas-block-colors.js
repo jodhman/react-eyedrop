@@ -34,8 +34,8 @@ export const getCanvasBlockColors = (
 
   let colorBlock = []
   for (let i = 0; i < imageData.length; i += 4) {
-    const [r, g, b, a] = imageData.slice(i, i + 4)
-    colorBlock.push({ r: r, g: g, b: b })
+    const [r, g, b] = imageData.slice(i, i + 4)
+    colorBlock.push({ r, g, b })
   }
   return colorBlock
 }

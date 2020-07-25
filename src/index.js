@@ -15,6 +15,19 @@ import { rgbToHex } from './rgb-to-hex'
 import type { RgbObj } from './types'
 import { validatePickRadius } from './validate-pick-radius'
 
+const styles = {
+  eyedropperWrapper: {
+    position: 'relative'
+  },
+  eyedropperWrapperButton: {
+    backgroundColor: '#000000',
+    color: '#ffffff',
+    border: '1px solid #ffffff',
+    borderRadius: '20%',
+    padding: '10px 25px',
+  }
+}
+
 type Props = {
   onChange: Function,
   wrapperClasses?: string,
@@ -80,7 +93,7 @@ export const EyeDropper = (props: Props) => {
   
   const targetToCanvas = (e: any) => {
     const { target } = e
-    
+
     if(e.target.nodeName.toLowerCase() === 'img') {
       // Convert image to canvas because `html2canvas` can not
       const { offsetX, offsetY } = e
@@ -90,16 +103,15 @@ export const EyeDropper = (props: Props) => {
       once === true && deactivateColorPicking()
       return
     }
-    
-    const { pageX, pageY } = e
-    html2canvas(e.target, { logging: false })
+
+    const { offsetX, offsetY } = e
+    html2canvas(target, { logging: false })
     .then((canvasEl) => {
       if (pickRadius === undefined || pickRadius === 0) {
-        const { r, g, b } = getCanvasPixelColor(canvasEl, pageX, pageY)
+        const { r, g, b } = getCanvasPixelColor(canvasEl, offsetX, offsetY)
         updateColors({ r, g, b })
       } else {
-        const { pageX, pageY } = e
-        const colorBlock = extractColors(canvasEl, pickRadius, pageX, pageY)
+        const colorBlock = extractColors(canvasEl, pickRadius, offsetX, offsetY)
         const rgbColor = calcAverageColor(colorBlock)
         updateColors(rgbColor)
       }
@@ -160,42 +172,35 @@ export const EyeDropper = (props: Props) => {
   } = props
   const shouldColorsPassThrough = colorsPassThrough ? { [colorsPassThrough]: colors } : {}
   return (
-    <>
-      <style dangerouslySetInnerHTML={{__html: `
-        .react-eyedrop-wrapper {
-          position: relative;
-        }
-      `}} />
-      <div className={`react-eyedrop-wrapper ${wrapperClasses || ''}`}>
-        {CustomComponent ? (
-          <CustomComponent
+    <div style={styles.eyedropperWrapper} className={wrapperClasses}>
+      {CustomComponent ? (
+        <CustomComponent
+          onClick={pickColor}
+          {...shouldColorsPassThrough}
+          customProps={customProps}
+          disabled={buttonDisabled}
+        />
+      ) : (
+        <>
+          <style dangerouslySetInnerHTML={{__html: `
+            .react-eyedrop-button {
+              background-color: #000000;
+              color: #ffffff;
+              border: 1px solid #ffffff;
+              border-radius: 20%;
+              padding: 10px 25px;
+            }
+          `}} />
+          <button
+            id={'react-eyedrop-button'}
+            className={`react-eyedrop-button ${buttonClasses || ''}`}
             onClick={pickColor}
-            {...shouldColorsPassThrough}
-            customProps={customProps}
             disabled={buttonDisabled}
-          />
-        ) : (
-          <>
-            <style dangerouslySetInnerHTML={{__html: `
-              .react-eyedrop-button {
-                background-color: #000000;
-                color: #ffffff;
-                border: 1px solid #ffffff;
-                border-radius: 20%;
-                padding: 10px 25px;
-              }
-            `}} />
-            <button
-              id={'react-eyedrop-button'}
-              className={`react-eyedrop-button ${buttonClasses || ''}`}
-              onClick={pickColor}
-              disabled={buttonDisabled}
-            >
-              {children}
-            </button>
-          </>
-        )}
-      </div>
-    </>
+          >
+            {children}
+          </button>
+        </>
+      )}
+    </div>
   )
 }

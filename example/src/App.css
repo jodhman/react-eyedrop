@@ -13,6 +13,7 @@ body {
 .upload-image {
   position: relative;
   width: 100%;
+  background-color: #0e1923;
 }
 
 .upload-image input {
@@ -42,6 +43,7 @@ body {
 
 .uploaded-image-wrapper {
   height: 100%;
+  background-color: #0e1923;
 }
 
 .uploaded-image-wrapper img {

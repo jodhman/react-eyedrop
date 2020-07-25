@@ -93,7 +93,7 @@ export const EyeDropper = (props: Props) => {
   
   const targetToCanvas = (e: any) => {
     const { target } = e
-    
+
     if(e.target.nodeName.toLowerCase() === 'img') {
       // Convert image to canvas because `html2canvas` can not
       const { offsetX, offsetY } = e
@@ -103,16 +103,15 @@ export const EyeDropper = (props: Props) => {
       once === true && deactivateColorPicking()
       return
     }
-  
-    const { pageX, pageY } = e
-    html2canvas(e.target, { logging: false })
+
+    const { offsetX, offsetY } = e
+    html2canvas(target, { logging: false })
     .then((canvasEl) => {
       if (pickRadius === undefined || pickRadius === 0) {
-        const { r, g, b } = getCanvasPixelColor(canvasEl, pageX, pageY)
+        const { r, g, b } = getCanvasPixelColor(canvasEl, offsetX, offsetY)
         updateColors({ r, g, b })
       } else {
-        const { pageX, pageY } = e
-        const colorBlock = extractColors(canvasEl, pickRadius, pageX, pageY)
+        const colorBlock = extractColors(canvasEl, pickRadius, offsetX, offsetY)
         const rgbColor = calcAverageColor(colorBlock)
         updateColors(rgbColor)
       }
