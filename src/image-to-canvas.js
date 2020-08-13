@@ -10,6 +10,13 @@ export const imageToCanvas = (eventTarget: HTMLImageElement) => {
   canvasElement.width = eventTarget.width
   canvasElement.height = eventTarget.height
   const context = canvasElement.getContext('2d')
-  context.drawImage(eventTarget, 0, 0, eventTarget.width, eventTarget.height)
+
+  // Allows for cross origin images
+  const imageURL = eventTarget.src
+  let downloadedImg = new Image
+  downloadedImg.crossOrigin = "Anonymous"
+  downloadedImg.src = imageURL
+
+  context.drawImage(downloadedImg, 0, 0, eventTarget.width, eventTarget.height)
   return canvasElement
 }
