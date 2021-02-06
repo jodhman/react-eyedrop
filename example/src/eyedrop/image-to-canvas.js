@@ -6,17 +6,24 @@ export const imageToCanvas = (eventTarget: HTMLImageElement) => {
   if(eventTarget.nodeName !== 'IMG') {
     throw TARGET_NODE_TYPE_NOT_IMG_ERROR
   }
-  const canvasElement = document.createElement('canvas')
-  canvasElement.width = eventTarget.width
-  canvasElement.height = eventTarget.height
-  const context = canvasElement.getContext('2d')
 
-  // Allows for cross origin images
-  const imageURL = eventTarget.src
-  let downloadedImg = new Image
-  downloadedImg.crossOrigin = "Anonymous"
-  downloadedImg.src = imageURL
+  return new Promise((resolve) => {
+    const canvasElement = document.createElement('canvas')
+    canvasElement.width = eventTarget.width
+    canvasElement.height = eventTarget.height
+    const context = canvasElement.getContext('2d')
 
-  context.drawImage(downloadedImg, 0, 0, eventTarget.width, eventTarget.height)
-  return canvasElement
+    // Allows for cross origin images
+    const handleLoad = () => {
+      context.drawImage(downloadedImg, 0, 0, eventTarget.width, eventTarget.height)
+      resolve(canvasElement)
+    }
+    const imageURL = eventTarget.src
+    let downloadedImg = new Image()
+    downloadedImg.width = eventTarget.width
+    downloadedImg.height = eventTarget.height
+    downloadedImg.crossOrigin = 'Anonymous'
+    downloadedImg.addEventListener('load', handleLoad)
+    downloadedImg.src = imageURL
+  })
 }

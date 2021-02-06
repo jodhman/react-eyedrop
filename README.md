@@ -228,7 +228,9 @@ npm run test
 
 ## Release History
 
-* 4.1.4
+* 4.2.0
+    * Fixed fundamental issue with color picking
+* 4.1.4 (broken)
     * Now handles cross origin images
 * 4.1.3
     * Bug fix related to color picking from the correct target
