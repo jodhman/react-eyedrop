@@ -3,16 +3,18 @@
 ![](coverage/badge-functions.svg)
 ![](coverage/badge-lines.svg)
 ![](coverage/badge-statements.svg)
-> A highly customizable, fully tested, flow-typed color eye-dropper for your React project.
+> A highly customizable, fully typed & tested color eye-dropper for your React project.
 <!--
 [![](https://img.shields.io/bundlephobia/min/react-eyedrop.svg)](https://bundlephobia.com/result?p=react-eyedrop@1.0.0)
 [![NPM Version][npm-image]][npm-url]
 [![Build Status][travis-image]][travis-url]
 [![Downloads Stats][npm-downloads]][npm-url]
 -->
-With flexibility in mind, let your users eyedrop anything in your app within a minute.
-Designed to work out of the box, the only required property to pass down is `onChange`.
-A example project is included for basic usage.
+### ***With flexibility in mind, let your users eye drop anything in your app within a minute.***
+<br>
+React Component or React Hook, you have both at your disposal.
+<br><br>
+A example project is included for basic usage of both Component & Hook.
 
 ![](readme_header.jpg)
 
@@ -20,37 +22,42 @@ A example project is included for basic usage.
 
 ## Installation
 
-NPM:
-
-```
-npm install --save react-eyedrop
-```
-
 Yarn:
 
 ```
 yarn add react-eyedrop
 ```
 
+NPM:
+
+```
+npm install --save react-eyedrop
+```
+
 ## API Reference
 
 ##### Table of contents
-**[onChange](#api-onChange)** <br>
-**[wrapperClasses](#api-wrapperClasses)** <br>
-**[buttonClasses](#api-buttonClasses)** <br>
-**[customComponent](#api-customComponent)** <br>
-**[customProps](#api-customProps)** <br>
-**[colorsPassThrough](#api-colorsPassThrough)** <br>
-**[disabled](#api-disabled)** <br>
-**[once](#api-once)** <br>
-**[pickRadius](#api-pickRadius)** <br>
-**[cursorActive](#api-cursorActive)** <br>
-**[cursorInactive](#api-cursorInactive)** <br>
-**[onInit](#api-onInit)** <br>
-**[onPickStart](#api-onPickStart)** <br>
+* React Component
+  * **[onChange](#api-onChange)** <br>
+  * **[wrapperClasses](#api-wrapperClasses)** <br>
+  * **[buttonClasses](#api-buttonClasses)** <br>
+  * **[customComponent](#api-customComponent)** <br>
+  * **[customProps](#api-customProps)** <br>
+  * **[colorsPassThrough](#api-colorsPassThrough)** <br>
+  * **[disabled](#api-disabled)** <br>
+  * **[once](#api-once)** <br>
+  * **[pickRadius](#api-pickRadius)** <br>
+  * **[cursorActive](#api-cursorActive)** <br>
+  * **[cursorInactive](#api-cursorInactive)** <br>
+  * **[onInit](#api-onInit)** <br>
+  * **[onPickStart](#api-onPickStart)** <br>
+* React Hook
+  * **[Usage](#hook-usage)**
 
-# <a name="api-onChange"></a>
-#### **onChange**
+# **React Component**
+
+<a name="api-onChange"></a>
+### **onChange**
 ###### `required`
 ###### Expects `function`
 ###### Returns an object:
@@ -65,8 +72,8 @@ function onChange({ rgb, hex }) {
 <EyeDropper onChange={onChange} />
 ```
 
-# <a name="api-wrapperClasses"></a>
-#### **wrapperClasses**
+<a name="api-wrapperClasses"></a>
+### **wrapperClasses**
 ###### Expects `string`
 *Example:*
 ```
@@ -75,8 +82,8 @@ function onChange({ rgb, hex }) {
 <EyeDropper wrapperClasses={`my-css-class ${active ? 'my-active-css-class' : ''}`} />
 ```
 
-# <a name="api-buttonClasses"></a>
-#### **buttonClasses**
+<a name="api-buttonClasses"></a>
+### **buttonClasses**
 ###### Expects `string`
 *Example:*
 ```
@@ -85,8 +92,8 @@ function onChange({ rgb, hex }) {
 <EyeDropper buttonClasses={`my-css-class ${active ? 'my-active-css-class' : ''}`} />
 ```
 
-# <a name="api-customComponent"></a>
-#### **customComponent**
+<a name="api-customComponent"></a>
+### **customComponent**
 ###### Expects `React Node`
 ###### *Use your own component for your EyeDropping business.*
 ###### *Use the `onClick` prop which gets passed down.*
@@ -98,8 +105,8 @@ const Button = ({ onClick }) =>
 <EyeDropper customComponent={Button} />
 ```
 
-# <a name="api-customProps"></a>
-#### **customProps**
+<a name="api-customProps"></a>
+### **customProps**
 ###### Expects `object`
 ###### Requires customComponent to be set
 ###### *User can pass in their own data to the customComponent, the data can then be retrieved along with the color values in the onChange handler.*
@@ -112,8 +119,8 @@ const onChange = ({ rgb, hex, customProps }) => {
 <Eyedropper customComponent={Button} customProps={{data1, data2, data3}} onChange={onChange}/>
 ```
 
-# <a name="api-colorsPassThrough"></a>
-#### **colorsPassThrough**
+<a name="api-colorsPassThrough"></a>
+### **colorsPassThrough**
 ###### Expects `string`
 ###### *Provides access to the picked color value object { rgb, hex } for the eyedropper component.*
 ###### *Name provided here will be the name of the color object*
@@ -125,8 +132,8 @@ const Button = ({ onClick, pixelColors }) =>
 <EyeDropper customComponent={Button} colorsPassThrough='pixelColors' />
 ```
 
-# <a name="api-disabled"></a>
-#### **disabled**
+<a name="api-disabled"></a>
+### **disabled**
 ###### Expects `boolean`
 ###### *Internal property provided by the eyedropper component for passing down to the customComponent. It gives control disabling the button element while color picking is active*
 
@@ -136,8 +143,8 @@ const Button = ({ onClick, disabled }) =>
     <button className="btn" onClick={onClick} disabled={disabled} >My custom button</button>
 ```
 
-# <a name="api-once"></a>
-#### **once**
+<a name="api-once"></a>
+### **once**
 ###### Expects `boolean`
 ###### Defaults to `true`
 ###### *Decide if EyeDropping should stop after having pressed once. Dynamically changing this property during runtime will remove event listener & set cursorInactive. (if `false` -> `true` during runtime)*
@@ -148,8 +155,8 @@ const Button = ({ onClick, disabled }) =>
 <EyeDropper once={false} />
 ```
 
-# <a name="api-pickRadius"></a>
-#### **pickRadius**
+<a name="api-pickRadius"></a>
+### **pickRadius**
 ###### Expects `number` 
 ###### Range `0-450`
 ###### *Size of the pick radius. The final value will be the average sum of all the pixels within the radius.*
@@ -162,8 +169,8 @@ const Button = ({ onClick, disabled }) =>
 <EyeDropper pickRadius={1} />
 ```
 
-# <a name="api-cursorActive"></a>
-#### **cursorActive**
+<a name="api-cursorActive"></a>
+### **cursorActive**
 ###### Expects `string`
 ###### Defaults to `copy`
 ###### *Decide what CSS cursor to use when actively EyeDropping.*
@@ -173,8 +180,8 @@ const Button = ({ onClick, disabled }) =>
 <EyeDropper cursorActive="cursor" />
 ```
 
-# <a name="api-cursorInactive"></a>
-#### **cursorInactive**
+<a name="api-cursorInactive"></a>
+### **cursorInactive**
 ###### Expects `string`
 ###### Defaults to `auto`
 ###### *Decide what CSS cursor to revert back to once finished with EyeDropping business.*
@@ -184,8 +191,8 @@ const Button = ({ onClick, disabled }) =>
 <EyeDropper cursorActive="auto" />
 ```
 
-# <a name="api-onInit"></a>
-#### **onInit**
+<a name="api-onInit"></a>
+### **onInit**
 ###### Expects `function`
 ###### *Callback for componentDidMount*
 *Example:*
@@ -198,8 +205,8 @@ function getPeanut() {
 /* Will be called when component is mounted */
 ```
 
-# <a name="api-onPickStart"></a>
-#### **onPickStart**
+<a name="api-onPickStart"></a>
+### **onPickStart**
 ###### Expects `function`
 ###### *Callback for when starting to EyeDrop*
 *Example:*
@@ -211,6 +218,26 @@ function getBananas() {
 <EyeDropper onPickStart={getBananas} />
 /* Will be called when starting to EyeDrop */
 ```
+# React Hook
+
+<a name="hook-usage"></a>
+### **Usage**
+
+`colors` will contain whatever is clicked once `pickColor` is called.<br>
+Call `cancelPickColor` to stop picking colors. :zany_face:
+
+*Example:*
+```
+import { useEyeDrop } from 'react-eyedrop'
+
+const [colors, pickColor, cancelPickColor] = useEyeDrop({
+  once: boolean,
+  pickRadius: number,
+  cursorActive: CSS Cursors,
+  cursorInactive: CSS Cursors
+})
+```
+**[Link to CSS Cursors](https://www.w3schools.com/csSref/pr_class_cursor.asp)**
 
 ## Development setup
 
@@ -228,34 +255,36 @@ npm run test
 
 ## Release History
 
+* 5.0.4
+  * Rewritten in TypeScript
+  * Introduced useEyeDrop React hook
 * 4.2.0
-    * Fixed fundamental issue with color picking
-* 4.1.4 (broken)
-    * Now handles cross origin images
+  * Fixed fundamental issue with color picking
+  * Now handles cross origin images
 * 4.1.3
-    * Bug fix related to color picking from the correct target
+  * Bug fix related to color picking from the correct target
 * 4.1.2
-    * No longer inline styling
+  * No longer inline styling
 * 4.1.1
-    * Added Unit test Coverage badges in README
+  * Added Unit test Coverage badges in README
 * 4.1.0
-    * 100% Unit Test Coverage
+  * 100% Unit Test Coverage
 * 4.0.0
-    * Removed property `onPickEnd` since same functionality can be achieved with handleChange
+  * Removed property `onPickEnd` since same functionality can be achieved with handleChange
 * 3.4.2
-    * Now supports color-picking images presented through `img` tags on the DOM
+  * Now supports color-picking images presented through `img` tags on the DOM
 * 3.0.0
-    * Updated `pickRadius` feature to work with different units; radius & pixel.
+  * Updated `pickRadius` feature to work with different units; radius & pixel.
 * 2.1.2
-    * Fixed a typo in documentation
+  * Fixed a typo in documentation
 * 2.1.1
-    * Added `pickRadius` feature
+  * Added `pickRadius` feature
 * 2.0.1
-    * Updated documentation
+  * Updated documentation
 * 2.0.0
-    * Changed prop name from `buttonComponent` to `customComponent`
+  * Changed prop name from `buttonComponent` to `customComponent`
 * 1.0.0
-    * Initial release
+  * Initial release
 
 ## Meta
 

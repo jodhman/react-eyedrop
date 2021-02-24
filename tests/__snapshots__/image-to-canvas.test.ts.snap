@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`imageToCanvas should return a canvas based on image 1`] = `Promise {}`;
