@@ -1,3 +1,3 @@
-export * from './eyeDropper'
-export * from './types'
-export * from './useEyeDrop'
+export * from './eyeDropper';
+export * from './types';
+export * from './useEyeDrop';

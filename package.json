@@ -1,6 +1,6 @@
 {
   "name": "react-eyedrop",
-  "version": "5.0.5",
+  "version": "5.1.0",
   "description": "A reusable ColorPick EyeDropper written in React & TypeScript.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -29,7 +29,8 @@
     "build": "tsc",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "lint": "yarn run eslint src --fix"
   },
   "dependencies": {
     "get-canvas-pixel-color": "^2.0.0",
@@ -42,10 +43,14 @@
     "@babel/preset-react": "^7.7.4",
     "@types/enzyme": "^3.10.8",
     "@types/jest": "^26.0.20",
+    "@typescript-eslint/eslint-plugin": "^4.20.0",
+    "@typescript-eslint/parser": "^4.20.0",
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^26.6.3",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.2",
+    "eslint": "^7.23.0",
+    "eslint-plugin-react": "^7.23.1",
     "jest": "^26.6.3",
     "jest-canvas-mock": "^2.2.0",
     "lodash": "^4.17.15",

@@ -255,6 +255,8 @@ npm run test
 
 ## Release History
 
+* 5.1.0
+  * Pretty serious bugfix
 * 5.0.4
   * Rewritten in TypeScript
   * Introduced useEyeDrop React hook
