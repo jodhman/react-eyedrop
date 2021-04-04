@@ -1,12 +1,6 @@
-import React, {
-  FC,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useState
-} from 'react'
-import html2canvas from 'html2canvas'
-import getCanvasPixelColor from 'get-canvas-pixel-color'
+import * as React from 'react'
+import * as html2canvas from 'html2canvas'
+import * as getCanvasPixelColor from 'get-canvas-pixel-color'
 import { calcAverageColor } from './calcAverageColor'
 import { extractColors } from './extractColors'
 import { imageToCanvas } from './imageToCanvas'
@@ -14,6 +8,12 @@ import { parseRGB } from './parseRgb'
 import { rgbToHex } from './rgbToHex'
 import { OnChangeEyedrop, RgbObj } from './types'
 import { validatePickRadius } from './validatePickRadius'
+
+const {
+  useCallback,
+  useEffect,
+  useState
+} = React
 
 const styles = {
   eyedropperWrapper: {
@@ -32,7 +32,7 @@ type Props = {
   onChange: (changes: OnChangeEyedrop) => void,
   wrapperClasses?: string,
   buttonClasses?: string,
-  customComponent?: FC<any>,
+  customComponent?: React.FC<any>,
   once?: boolean,
   cursorActive?: string,
   cursorInactive?: string,
@@ -41,7 +41,7 @@ type Props = {
   colorsPassThrough?: string,
   pickRadius?: number,
   disabled?: boolean,
-  children?: ReactNode,
+  children?: React.ReactNode,
   customProps?: { [key: string]: any }
 }
 
@@ -107,7 +107,7 @@ export const EyeDropper = (props: Props) => {
       // Convert image to canvas because `html2canvas` can not
       const { offsetX, offsetY } = e
       imageToCanvas(target).then((value) => {
-        const { r, g, b } = getCanvasPixelColor(value, offsetX, offsetY)
+        const { r, g, b } = getCanvasPixelColor.default(value, offsetX, offsetY)
         updateColors({ r, g, b })
         once && deactivateColorPicking()
       })
@@ -115,17 +115,17 @@ export const EyeDropper = (props: Props) => {
     }
 
     const { offsetX, offsetY } = e
-    html2canvas(target, { logging: false })
-    .then((canvasEl) => {
-      if (pickRadius === undefined || pickRadius === 0) {
-        const { r, g, b } = getCanvasPixelColor(canvasEl, offsetX, offsetY)
-        updateColors({ r, g, b })
-      } else {
-        const colorBlock = extractColors(canvasEl, pickRadius, offsetX, offsetY)
-        const rgbColor = calcAverageColor(colorBlock)
-        updateColors(rgbColor)
-      }
-    })
+    (html2canvas as any).default(target, { logging: false })
+      .then((canvasEl) => {
+        if (pickRadius === undefined || pickRadius === 0) {
+          const { r, g, b } = getCanvasPixelColor(canvasEl, offsetX, offsetY)
+          updateColors({ r, g, b })
+        } else {
+          const colorBlock = extractColors(canvasEl, pickRadius, offsetX, offsetY)
+          const rgbColor = calcAverageColor(colorBlock)
+          updateColors(rgbColor)
+        }
+      })
 
     once && deactivateColorPicking()
   }, [deactivateColorPicking, once, pickRadius, updateColors])

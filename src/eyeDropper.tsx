@@ -115,7 +115,7 @@ export const EyeDropper = (props: Props) => {
     }
 
     const { offsetX, offsetY } = e
-    html2canvas.default(target, { logging: false })
+    (html2canvas as any).default(target, { logging: false })
     .then((canvasEl) => {
       if (pickRadius === undefined || pickRadius === 0) {
         const { r, g, b } = getCanvasPixelColor(canvasEl, offsetX, offsetY)
