@@ -255,14 +255,14 @@ npm run test
 
 ## Release History
 
-* 5.1.0
+* 5.1.3
   * Pretty serious bugfix
 * 5.0.4
   * Rewritten in TypeScript
   * Introduced useEyeDrop React hook
 * 4.2.0
   * Fixed fundamental issue with color picking
-  * Now handles cross origin images
+  * Now handles cross-origin images
 * 4.1.3
   * Bug fix related to color picking from the correct target
 * 4.1.2
@@ -290,7 +290,7 @@ npm run test
 
 ## Meta
 
-Manjodh "Jodhman" Singh – [manjodheriksingh@gmail.com](mailto:manjodheriksingh@gmail.com)
+Manjodh "Mango" Singh – [manjodheriksingh@gmail.com](mailto:manjodheriksingh@gmail.com)
 
 Distributed under the MIT license. See [license](https://opensource.org/licenses/MIT) for more information.
 

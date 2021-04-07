@@ -1,17 +1,17 @@
 export const ERROR_MSGS = {
-	calcAverageColor: {
-		notArrayOfRgbObj: 'calcAverageColor: only accepts array of colors',
-		noPixelsFound: 'calcAverageColor: 0 pixels found'
-	},
-	getCanvasBlockColors: {
-		elementNotCanvas: 'getCanvasBlockColors: element is not of type canvas'
-	},
-	imageToCanvas: {
-		targetNotImg: 'imageToCanvas: event target not of node type img'
-	},
-	validatePickRadius: {
-		pickRadiusOutOfBounds: 'Property `pickRadius` out of bounds: please choose a value between 0 - 450.'
-	}
+  calcAverageColor: {
+    notArrayOfRgbObj: 'calcAverageColor: only accepts array of colors',
+    noPixelsFound: 'calcAverageColor: 0 pixels found'
+  },
+  getCanvasBlockColors: {
+    elementNotCanvas: 'getCanvasBlockColors: element is not of type canvas'
+  },
+  imageToCanvas: {
+    targetNotImg: 'imageToCanvas: event target not of node type img'
+  },
+  validatePickRadius: {
+    pickRadiusOutOfBounds: 'Property `pickRadius` out of bounds: please choose a value between 0 - 450.'
+  }
 };
 
 export const PICK_RADIUS_OUT_OF_BOUNDS_ERROR = new Error(ERROR_MSGS.validatePickRadius.pickRadiusOutOfBounds);

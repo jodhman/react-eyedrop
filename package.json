@@ -1,6 +1,6 @@
 {
   "name": "react-eyedrop",
-  "version": "5.1.0",
+  "version": "5.1.3",
   "description": "A reusable ColorPick EyeDropper written in React & TypeScript.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
