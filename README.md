@@ -280,7 +280,7 @@ npm run test
 
 ## Release History
 
-* 5.2.0
+* 5.2.1
   * Added `onPickEnd` property
 * 5.1.3
   * Pretty serious bugfix
