@@ -51,6 +51,7 @@ npm install --save react-eyedrop
   * **[cursorInactive](#api-cursorInactive)** <br>
   * **[onInit](#api-onInit)** <br>
   * **[onPickStart](#api-onPickStart)** <br>
+  * **[onPickEnd](#api-onPickEnd)** <br>
 * React Hook
   * **[Usage](#hook-usage)**
 
@@ -151,7 +152,9 @@ const Button = ({ onClick, disabled }) =>
 *Example:*
 ```
 <EyeDropper once />
+
 /* or */
+
 <EyeDropper once={false} />
 ```
 
@@ -200,7 +203,9 @@ const Button = ({ onClick, disabled }) =>
 function getPeanut() {
     console.log('Mmm... Definately overrated.')
 }
+
 <!-------->
+
 <EyeDropper onInit={getPeanut} />
 /* Will be called when component is mounted */
 ```
@@ -208,15 +213,35 @@ function getPeanut() {
 <a name="api-onPickStart"></a>
 ### **onPickStart**
 ###### Expects `function`
-###### *Callback for when starting to EyeDrop*
+###### *Callback for when you start Eyedropping*
 *Example:*
 ```
 function getBananas() {
     console.log('Ahhh... Much better.')
 }
+
 <!-------->
+
 <EyeDropper onPickStart={getBananas} />
+
 /* Will be called when starting to EyeDrop */
+```
+
+<a name="api-onPickEnd"></a>
+### **onPickEnd**
+###### Expects `function`
+###### *Callback for when you stop EyeDropping*
+*Example:*
+```
+function buyBurritos() {
+    console.log('Yum!')
+}
+
+<!-------->
+
+<EyeDropper onPickEnd={buyBurritos} />
+
+/* Will be called when you finish EyeDropping */
 ```
 # React Hook
 
@@ -255,6 +280,8 @@ npm run test
 
 ## Release History
 
+* 5.2.0
+  * Added `onPickEnd` property
 * 5.1.3
   * Pretty serious bugfix
 * 5.0.4
