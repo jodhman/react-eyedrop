@@ -6,7 +6,7 @@ import { extractColors } from './extractColors';
 import { imageToCanvas } from './imageToCanvas';
 import { parseRGB } from './parseRgb';
 import { rgbToHex } from './rgbToHex';
-import { OnChangeEyedrop, RgbObj } from './types';
+import { OnChangeEyedrop, RgbObj, PickingMode } from './types';
 import { validatePickRadius } from './validatePickRadius';
 
 const html2canvas = _html2canvas as any as (element: HTMLElement, options?: Partial<_html2canvas.Options>) => Promise<HTMLCanvasElement>;
@@ -40,6 +40,7 @@ type Props = {
   cursorInactive?: string,
   onInit?: () => void,
   onPickStart?: () => void,
+  onPickEnd?: () => void,
   colorsPassThrough?: string,
   pickRadius?: number,
   disabled?: boolean,
@@ -67,10 +68,11 @@ export const EyeDropper = (props: Props) => {
     children,
     customProps,
     disabled,
-    onPickStart
+    onPickStart,
+    onPickEnd,
   } = props;
 
-  const setPickingMode = useCallback((isPicking: boolean, disableButton: boolean, showActiveCursor: boolean) => {
+  const setPickingMode = useCallback(({ isPicking, disableButton, showActiveCursor }: PickingMode) => {
     if(document.body) {
       document.body.style.cursor = showActiveCursor ? cursorActive : cursorInactive;
     }
@@ -78,19 +80,30 @@ export const EyeDropper = (props: Props) => {
     setButtonDisabled(disableButton);
   }, [cursorActive, cursorInactive]);
 
-  const exitPick = useCallback((event: KeyboardEvent) => event.keyCode === 27 && (
-    setPickingMode(false, false, false)
-  ), [setPickingMode]);
+  const deactivateColorPicking = useCallback(
+    () => {
+      setPickingMode({
+        isPicking: false,
+        disableButton: false,
+        showActiveCursor: false
+      })
+      onPickEnd()
+    }, [setPickingMode, onPickEnd]
+  );
+
+  const exitPickByEscKey = useCallback((event: KeyboardEvent) => {
+    event.keyCode === 27 && pickingColorFromDocument && deactivateColorPicking()
+  }, [setPickingMode, pickingColorFromDocument]);
 
   const pickColor = () => {
     if (onPickStart) { onPickStart(); }
 
-    setPickingMode(true, disabled || true, true);
+    setPickingMode({
+      isPicking: true,
+      disableButton: disabled || true,
+      showActiveCursor: true
+    });
   };
-
-  const deactivateColorPicking = useCallback(
-    () => setPickingMode(false, false, false), [setPickingMode]
-  );
 
   const updateColors = useCallback((rgbObj: RgbObj) => {
     const rgb = parseRGB(rgbObj);
@@ -145,19 +158,17 @@ export const EyeDropper = (props: Props) => {
       document.addEventListener('click', targetToCanvas);
     }
     return () => {
-      if (once || pickingColorFromDocument) {
-        document.removeEventListener('click', targetToCanvas);
-      }
+      document.removeEventListener('click', targetToCanvas);
     };
   }, [pickingColorFromDocument, once, targetToCanvas]);
 
   // setup listener for the esc key
   useEffect(() => {
-    document.addEventListener('keydown', exitPick);
+    document.addEventListener('keydown', exitPickByEscKey);
     return () => {
-      document.removeEventListener('keydown', exitPick);
+      document.removeEventListener('keydown', exitPickByEscKey);
     };
-  }, [exitPick]);
+  }, [exitPickByEscKey]);
 
   const shouldColorsPassThrough = colorsPassThrough ? { [colorsPassThrough]: colors } : {};
   return (

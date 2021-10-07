@@ -16,3 +16,9 @@ export type HookOptions = {
   cursorActive?: string
   cursorInactive?: string
 }
+
+export type PickingMode = {
+  isPicking: boolean,
+  disableButton: boolean,
+  showActiveCursor: boolean
+}
