@@ -140,11 +140,13 @@ export const EyeDropper = (props: Props) => {
 
   // setup listener for the esc key
   useEffect(() => {
-    document.addEventListener('keydown', exitPickByEscKey);
+    if (pickingColorFromDocument) {
+      document.addEventListener('keydown', exitPickByEscKey);
+    }
     return () => {
       document.removeEventListener('keydown', exitPickByEscKey);
     };
-  }, [exitPickByEscKey]);
+  }, [pickingColorFromDocument, exitPickByEscKey]);
 
   const shouldColorsPassThrough = colorsPassThrough ? { [colorsPassThrough]: colors } : {};
   return (
