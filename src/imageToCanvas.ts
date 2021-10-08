@@ -1,6 +1,6 @@
 import { TARGET_NODE_TYPE_NOT_IMG_ERROR } from './constants/errors';
 
-export const imageToCanvas = (eventTarget: HTMLImageElement) => {
+export const imageToCanvas = (eventTarget: HTMLImageElement): Promise<HTMLCanvasElement> => {
   if(eventTarget.nodeName !== 'IMG') {
     throw TARGET_NODE_TYPE_NOT_IMG_ERROR;
   }
