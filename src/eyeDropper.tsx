@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { parseRGB } from './color-utils/parseRgb';
-import { rgbToHex } from './color-utils/rgbToHex';
+import { parseRGB } from './colorUtils/parseRgb';
+import { rgbToHex } from './colorUtils/rgbToHex';
 import { OnChangeEyedrop, RgbObj, PickingMode } from './types';
 import { validatePickRadius } from './validations/validatePickRadius';
 import { targetToCanvas } from './targetToCanvas'

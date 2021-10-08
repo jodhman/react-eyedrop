@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { HookOptions, RgbObj } from './types';
-import { parseRGB } from './color-utils/parseRgb';
-import { rgbToHex } from './color-utils/rgbToHex';
+import { parseRGB } from './colorUtils/parseRgb';
+import { rgbToHex } from './colorUtils/rgbToHex';
 import { targetToCanvas } from './targetToCanvas'
 import { getColor } from './getColor'
 import { useCallback } from 'react'
