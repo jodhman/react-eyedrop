@@ -28,6 +28,10 @@ export const useEyeDrop = ({
     setPickingColorFromDocument(false);
   };
 
+  const exitPickByEscKey = (event: KeyboardEvent) => {
+    event.code === 'Escape' && pickingColorFromDocument && cancelPickColor()
+  }
+
   const updateColors = (rgbObj: RgbObj) => {
     const rgb = parseRGB(rgbObj);
     const hex = rgbToHex(rgbObj);
@@ -53,6 +57,16 @@ export const useEyeDrop = ({
       document.removeEventListener('click', extractColor);
     };
   }, [pickingColorFromDocument, once]);
+
+  // setup listener for the esc key
+  useEffect(() => {
+    if (pickingColorFromDocument) {
+      document.addEventListener('keydown', exitPickByEscKey);
+    }
+    return () => {
+      document.removeEventListener('keydown', exitPickByEscKey);
+    };
+  }, [pickingColorFromDocument, exitPickByEscKey]);
 
   useEffect(() => {
     if(document.body) {
