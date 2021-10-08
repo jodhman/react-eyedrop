@@ -4,6 +4,7 @@ import { parseRGB } from './color-utils/parseRgb';
 import { rgbToHex } from './color-utils/rgbToHex';
 import { targetToCanvas } from './targetToCanvas'
 import { getColor } from './getColor'
+import { useCallback } from 'react'
 
 const { useEffect, useState } = React;
 
@@ -28,9 +29,9 @@ export const useEyeDrop = ({
     setPickingColorFromDocument(false);
   };
 
-  const exitPickByEscKey = (event: KeyboardEvent) => {
+  const exitPickByEscKey = useCallback((event: KeyboardEvent) => {
     event.code === 'Escape' && pickingColorFromDocument && cancelPickColor()
-  }
+  }, [ pickingColorFromDocument, cancelPickColor ])
 
   const updateColors = (rgbObj: RgbObj) => {
     const rgb = parseRGB(rgbObj);
@@ -39,7 +40,7 @@ export const useEyeDrop = ({
     setColors({ rgb, hex });
   };
 
-  const extractColor = async (e: any) => {
+  const extractColor = useCallback(async (e: any) => {
     const { target } = e;
 
     const targetCanvas = await targetToCanvas(target)
@@ -47,7 +48,7 @@ export const useEyeDrop = ({
 
     updateColors(rgbColor)
     once && setPickingColorFromDocument(false);
-  };
+  }, [ once, setPickingColorFromDocument ]);
 
   useEffect(() => {
     if (pickingColorFromDocument) {
@@ -56,7 +57,7 @@ export const useEyeDrop = ({
     return () => {
       document.removeEventListener('click', extractColor);
     };
-  }, [pickingColorFromDocument, once]);
+  }, [pickingColorFromDocument, once, extractColor]);
 
   // setup listener for the esc key
   useEffect(() => {
@@ -72,7 +73,7 @@ export const useEyeDrop = ({
     if(document.body) {
       document.body.style.cursor = pickingColorFromDocument ? cursorActive : cursorInactive;
     }
-  }, [pickingColorFromDocument]);
+  }, [pickingColorFromDocument, cursorActive, cursorInactive]);
 
   return [ colors, pickColor, cancelPickColor ];
 };

@@ -88,7 +88,7 @@ export const EyeDropper = (props: Props) => {
 
   const exitPickByEscKey = useCallback((event: KeyboardEvent) => {
     event.code === 'Escape' && pickingColorFromDocument && deactivateColorPicking()
-  }, [setPickingMode, pickingColorFromDocument]);
+  }, [pickingColorFromDocument, deactivateColorPicking]);
 
   const pickColor = () => {
     if (onPickStart) { onPickStart(); }
