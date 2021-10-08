@@ -1,15 +1,10 @@
 import * as React from 'react';
-import * as getCanvasPixelColor from 'get-canvas-pixel-color';
-import * as _html2canvas from 'html2canvas';
-import { calcAverageColor } from './calcAverageColor';
-import { extractColors } from './extractColors';
-import { imageToCanvas } from './imageToCanvas';
-import { parseRGB } from './parseRgb';
-import { rgbToHex } from './rgbToHex';
+import { parseRGB } from './color-utils/parseRgb';
+import { rgbToHex } from './color-utils/rgbToHex';
 import { OnChangeEyedrop, RgbObj, PickingMode } from './types';
-import { validatePickRadius } from './validatePickRadius';
-
-const html2canvas = _html2canvas as any as (element: HTMLElement, options?: Partial<_html2canvas.Options>) => Promise<HTMLCanvasElement>;
+import { validatePickRadius } from './validations/validatePickRadius';
+import { targetToCanvas } from './targetToCanvas'
+import { getColor } from './getColor'
 
 const {
   useCallback,
@@ -87,12 +82,12 @@ export const EyeDropper = (props: Props) => {
         disableButton: false,
         showActiveCursor: false
       })
-      onPickEnd()
+      onPickEnd && onPickEnd()
     }, [setPickingMode, onPickEnd]
   );
 
   const exitPickByEscKey = useCallback((event: KeyboardEvent) => {
-    event.keyCode === 27 && pickingColorFromDocument && deactivateColorPicking()
+    event.code === 'Escape' && pickingColorFromDocument && deactivateColorPicking()
   }, [setPickingMode, pickingColorFromDocument]);
 
   const pickColor = () => {
@@ -115,32 +110,13 @@ export const EyeDropper = (props: Props) => {
     setColors({ rgb, hex });
   }, [customProps, onChange]);
 
-  const targetToCanvas = useCallback((e: any) => {
+  const extractColor = useCallback(async (e: any) => {
     const { target } = e;
 
-    if(target.nodeName.toLowerCase() === 'img') {
-      // Convert image to canvas because `html2canvas` can not
-      const { offsetX, offsetY } = e;
-      imageToCanvas(target).then((value) => {
-        const { r, g, b } = getCanvasPixelColor(value, offsetX, offsetY);
-        updateColors({ r, g, b });
-        once && deactivateColorPicking();
-      });
-      return;
-    }
+    const targetCanvas = await targetToCanvas(target)
+    const rgbColor = getColor(pickRadius, targetCanvas, e)
 
-    const { offsetX, offsetY } = e;
-    html2canvas(target, { logging: false }).then((canvasEl) => {
-      if (pickRadius === undefined || pickRadius === 0) {
-        const { r, g, b } = getCanvasPixelColor(canvasEl, offsetX, offsetY);
-        updateColors({ r, g, b });
-      } else {
-        const colorBlock = extractColors(canvasEl, pickRadius, offsetX, offsetY);
-        const rgbColor = calcAverageColor(colorBlock);
-        updateColors(rgbColor);
-      }
-    });
-
+    updateColors(rgbColor)
     once && deactivateColorPicking();
   }, [deactivateColorPicking, once, pickRadius, updateColors]);
 
@@ -155,12 +131,12 @@ export const EyeDropper = (props: Props) => {
   // setup listener for canvas picking click
   useEffect(() => {
     if (pickingColorFromDocument) {
-      document.addEventListener('click', targetToCanvas);
+      document.addEventListener('click', extractColor);
     }
     return () => {
-      document.removeEventListener('click', targetToCanvas);
+      document.removeEventListener('click', extractColor);
     };
-  }, [pickingColorFromDocument, once, targetToCanvas]);
+  }, [pickingColorFromDocument, once, extractColor]);
 
   // setup listener for the esc key
   useEffect(() => {

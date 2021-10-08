@@ -1,4 +1,4 @@
-import { validateCanvasExtractionValues } from '../src/validateCanvasExtractionValues'
+import { validateCanvasExtractionValues } from '../src/validations/validateCanvasExtractionValues'
 
 describe('validateCanvasExtractionValues should', () => {
   describe('return adjusted extraction values if value if out of bounds', () => {

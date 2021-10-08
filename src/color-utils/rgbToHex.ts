@@ -1,4 +1,4 @@
-import { RgbObj } from './types';
+import { RgbObj } from '../types';
 
 const numberToHex = (rgb: number) => {
   let hex = rgb.toString(16);

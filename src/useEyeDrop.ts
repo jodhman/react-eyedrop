@@ -1,29 +1,31 @@
 import * as React from 'react';
-import * as getCanvasPixelColor from 'get-canvas-pixel-color';
-import * as _html2canvas from 'html2canvas';
 import { HookOptions, RgbObj } from './types';
-import { imageToCanvas } from './imageToCanvas';
-import { extractColors } from './extractColors';
-import { calcAverageColor } from './calcAverageColor';
-import { parseRGB } from './parseRgb';
-import { rgbToHex } from './rgbToHex';
+import { parseRGB } from './color-utils/parseRgb';
+import { rgbToHex } from './color-utils/rgbToHex';
+import { targetToCanvas } from './targetToCanvas'
+import { getColor } from './getColor'
 
 const { useEffect, useState } = React;
-const html2canvas = _html2canvas as any as (element: HTMLElement, options?: Partial<_html2canvas.Options>) => Promise<HTMLCanvasElement>;
 
 const initialStateColors = { rgb: '', hex: '' };
+
+type ReturnValue = [ typeof initialStateColors, () => void, () => void ]
 
 export const useEyeDrop = ({
   once,
   pickRadius,
   cursorActive = 'copy',
   cursorInactive = 'auto',
-}: HookOptions = {}): [typeof initialStateColors, () => void, () => void] => {
+}: HookOptions = {}): ReturnValue => {
   const [colors, setColors] = useState(initialStateColors);
   const [pickingColorFromDocument, setPickingColorFromDocument] = useState(false);
 
   const pickColor = () => {
     setPickingColorFromDocument(true);
+  };
+
+  const cancelPickColor = () => {
+    setPickingColorFromDocument(false);
   };
 
   const updateColors = (rgbObj: RgbObj) => {
@@ -33,48 +35,22 @@ export const useEyeDrop = ({
     setColors({ rgb, hex });
   };
 
-  const targetToCanvas = (e: any) => {
+  const extractColor = async (e: any) => {
     const { target } = e;
 
-    if(target.nodeName.toLowerCase() === 'img') {
-      // Convert image to canvas because `html2canvas` can not
-      const { offsetX, offsetY } = e;
-      imageToCanvas(target).then((value) => {
-        const { r, g, b } = getCanvasPixelColor(value, offsetX, offsetY);
-        updateColors({ r, g, b });
-        once && setPickingColorFromDocument(false);
-      });
-      return;
-    }
+    const targetCanvas = await targetToCanvas(target)
+    const rgbColor = getColor(pickRadius, targetCanvas, e)
 
-    const { offsetX, offsetY } = e;
-    html2canvas(target, { logging: false })
-      .then((canvasEl) => {
-        if (pickRadius === undefined || pickRadius === 0) {
-          const { r, g, b } = getCanvasPixelColor(canvasEl, offsetX, offsetY);
-          updateColors({ r, g, b });
-        } else {
-          const colorBlock = extractColors(canvasEl, pickRadius, offsetX, offsetY);
-          const rgbColor = calcAverageColor(colorBlock);
-          updateColors(rgbColor);
-        }
-      });
-
+    updateColors(rgbColor)
     once && setPickingColorFromDocument(false);
-  };
-
-  const cancelPickColor = () => {
-    setPickingColorFromDocument(false);
   };
 
   useEffect(() => {
     if (pickingColorFromDocument) {
-      document.addEventListener('click', targetToCanvas);
+      document.addEventListener('click', extractColor);
     }
     return () => {
-      if (once || pickingColorFromDocument) {
-        document.removeEventListener('click', targetToCanvas);
-      }
+      document.removeEventListener('click', extractColor);
     };
   }, [pickingColorFromDocument, once]);
 

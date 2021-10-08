@@ -1,4 +1,4 @@
-import { parseRGB } from '../src/parseRgb'
+import { parseRGB } from '../src/color-utils/parseRgb'
 
 describe('parseRGB should', () => {
   describe('convert a rbg object to usable rgb string:', () => {

@@ -1,5 +1,5 @@
-import { calcAverageColor } from '../src/calcAverageColor'
 import { ERROR_MSGS } from '../src/constants/errors'
+import { calcAverageColor } from '../src/getColor/calcAverageColor'
 
 const black = {
   r: 0,

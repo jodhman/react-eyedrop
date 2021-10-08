@@ -1,8 +1,8 @@
 import {
   VAL_NOT_RGB_OBJ_ARRAY_ERROR,
   ZERO_PIXELS_FOUND_ERROR
-} from './constants/errors';
-import { RgbObj } from './types';
+} from '../constants/errors';
+import { RgbObj } from '../types';
 
 export const calcAverageColor = (colorBlock: Array<RgbObj>): RgbObj => {
   const totalPixels = colorBlock.length;

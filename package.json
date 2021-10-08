@@ -26,7 +26,7 @@
   },
   "homepage": "https://github.com/jodhman/react-eyedrop/blob/master/README.md",
   "scripts": {
-    "build": "tsc",
+    "build": "rm -rf dist && tsc",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",

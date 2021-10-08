@@ -1,9 +1,5 @@
 import { ERROR_MSGS } from '../src/constants/errors'
-import {
-  MAXIMUM_PICK_RADIUS,
-  MINIMUM_PICK_RADIUS,
-  validatePickRadius
-} from '../src/validatePickRadius'
+import { MAXIMUM_PICK_RADIUS, MINIMUM_PICK_RADIUS, validatePickRadius } from '../src/validations/validatePickRadius'
 
 describe('validatePickRadius should', () => {
   it(`throw if pick radius is less than ${MINIMUM_PICK_RADIUS}`, () => {
@@ -15,6 +11,6 @@ describe('validatePickRadius should', () => {
   })
 
   it('do nothing if pick radius is valid', () => {
-    expect(validatePickRadius(200)).toBe(undefined)
+    expect(() => validatePickRadius(200)).toBe(undefined)
   })
 })

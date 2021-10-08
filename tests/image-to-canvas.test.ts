@@ -1,5 +1,5 @@
 import { ERROR_MSGS } from '../src/constants/errors'
-import { imageToCanvas } from '../src/imageToCanvas'
+import { imageToCanvas } from '../src/targetToCanvas/imageToCanvas'
 
 describe('imageToCanvas should', () => {
   it('return a canvas based on image', () => {

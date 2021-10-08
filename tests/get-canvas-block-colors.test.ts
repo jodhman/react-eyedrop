@@ -1,5 +1,5 @@
 import { ERROR_MSGS } from '../src/constants/errors'
-import { getCanvasBlockColors } from '../src/getCanvasBlockColors'
+import { getCanvasBlockColors } from '../src/getColor/getCanvasBlockColors'
 
 describe('getCanvasBlockColors should', () => {
     const canvasElement = document.createElement('canvas')

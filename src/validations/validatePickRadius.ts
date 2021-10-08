@@ -1,4 +1,4 @@
-import { PICK_RADIUS_OUT_OF_BOUNDS_ERROR } from './constants/errors';
+import { PICK_RADIUS_OUT_OF_BOUNDS_ERROR } from '../constants/errors';
 
 export const MINIMUM_PICK_RADIUS = 0;
 export const MAXIMUM_PICK_RADIUS = 450;

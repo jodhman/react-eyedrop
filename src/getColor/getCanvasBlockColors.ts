@@ -1,6 +1,6 @@
-import { ELEMENT_NOT_CANVAS_ERROR } from './constants/errors';
-import { RgbObj } from './types';
-import { validateCanvasExtractionValues } from './validateCanvasExtractionValues';
+import { ELEMENT_NOT_CANVAS_ERROR } from '../constants/errors';
+import { RgbObj } from '../types';
+import { validateCanvasExtractionValues } from '../validations/validateCanvasExtractionValues';
 
 export const getCanvasBlockColors = (
   canvas: HTMLCanvasElement,

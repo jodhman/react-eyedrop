@@ -2,7 +2,7 @@ import * as React from 'react'
 import { hot } from 'react-hot-loader'
 
 import './App.css'
-import { EyeDropper, OnChangeEyedrop, useEyeDrop } from 'react-eyedrop'
+import { EyeDropper, OnChangeEyedrop, useEyeDrop } from './package'
 import { ChangeEvent, useEffect } from 'react'
 const { useState } = React
 
