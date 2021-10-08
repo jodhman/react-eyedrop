@@ -11,6 +11,6 @@ describe('validatePickRadius should', () => {
   })
 
   it('do nothing if pick radius is valid', () => {
-    expect(() => validatePickRadius(200)).toBe(undefined)
+    expect(validatePickRadius(200)).toBe(undefined)
   })
 })
