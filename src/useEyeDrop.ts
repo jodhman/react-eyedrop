@@ -40,7 +40,7 @@ export const useEyeDrop = ({
     setColors({ rgb, hex });
   };
 
-  const extractColor = useCallback(async (e: any) => {
+  const extractColor = useCallback(async (e: MouseEvent) => {
     const { target } = e;
 
     const targetCanvas = await targetToCanvas(target)

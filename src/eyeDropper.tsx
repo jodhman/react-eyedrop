@@ -110,7 +110,7 @@ export const EyeDropper = (props: Props) => {
     setColors({ rgb, hex });
   }, [customProps, onChange]);
 
-  const extractColor = useCallback(async (e: any) => {
+  const extractColor = useCallback(async (e: MouseEvent) => {
     const { target } = e;
 
     const targetCanvas = await targetToCanvas(target)
