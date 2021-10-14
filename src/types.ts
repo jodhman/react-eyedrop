@@ -1,3 +1,5 @@
+import { MutableRefObject } from 'react';
+
 export type RgbObj = {
   r: number
   g: number
@@ -21,4 +23,23 @@ export type PickingMode = {
   isPicking: boolean,
   disableButton: boolean,
   showActiveCursor: boolean
+}
+
+export type TargetRef = {
+  element: HTMLElement;
+  rect: DOMRect;
+};
+
+export interface EyeDropperProps {
+  areaSelector?: string;
+  pixelateValue?: number;
+  magnifierSize?: number;
+  zoom?: number;
+}
+
+export interface MagnifierProps extends EyeDropperProps {
+  active: boolean;
+  canvas: HTMLCanvasElement | null;
+  setColorCallback: any;
+  target: MutableRefObject<TargetRef>;
 }

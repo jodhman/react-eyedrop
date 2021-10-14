@@ -2,7 +2,7 @@ import * as React from 'react'
 import { hot } from 'react-hot-loader'
 
 import './App.css'
-import { EyeDropper, OnChangeEyedrop, useEyeDrop } from './package'
+import { EyeDropper, OnChangeEyedrop, useEyeDrop } from './dist'
 import { ChangeEvent, useEffect } from 'react'
 const { useState } = React
 
@@ -64,6 +64,7 @@ const App = () => {
         {image ? (
           <div className="eyedrop-wrapper">
             <EyeDropper once={eyedropOnce} onChange={handleChangeColor}>Pick Color</EyeDropper>
+            <EyeDropper once={eyedropOnce} onChange={handleChangeColor} isMagnifiedPicker={true}>Magnified EyeDropper</EyeDropper>
             <button onClick={pickColor}>Pick Color With Hook</button>
             <p>Once: {eyedropOnce.toString()}</p>
             <button onClick={toggleOnce}>Toggle `once` prop</button>
