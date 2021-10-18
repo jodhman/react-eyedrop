@@ -1,13 +1,16 @@
 import * as React from 'react';
+import * as _html2canvas from 'html2canvas';
+const html2canvas = _html2canvas as any as (element: HTMLElement, options?: Partial<_html2canvas.Options>) => Promise<HTMLCanvasElement>;
+import { useRef } from 'react';
+
 import { parseRGB } from './colorUtils/parseRgb';
 import { rgbToHex } from './colorUtils/rgbToHex';
-import { OnChangeEyedrop, RgbObj, PickingMode, MagnifierProps, TargetRef } from './types';
+import { OnChangeEyedrop, RgbObj, PickingMode, TargetRef } from './types';
 import { validatePickRadius } from './validations/validatePickRadius';
 import { targetToCanvas } from './targetToCanvas';
 import { getColor } from './getColor';
-import { useRef } from 'react';
-import Magnifier from './Magnifier';
-import html2canvas from 'html2canvas';
+import { Magnifier } from './magnifier';
+import { hexToRgb } from './colorUtils/hexToRgb'
 
 const {
   useCallback,
@@ -122,15 +125,6 @@ export const EyeDropper = (props: Props) => {
   };
 
   const setColorCallback = (hex: any) => {
-    function hexToRgb(hex: any) {
-      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-      return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
-      } : null;
-    }
-
     const rgbObj = hexToRgb(hex);
     const rgb = rgbObj && parseRGB(rgbObj);
 
@@ -186,16 +180,6 @@ export const EyeDropper = (props: Props) => {
     };
   }, [pickingColorFromDocument, exitPickByEscKey]);
 
-  const magnifierProps: MagnifierProps = {
-    active,
-    canvas,
-    zoom,
-    pixelateValue,
-    magnifierSize,
-    setColorCallback,
-    target,
-  };
-
   useEffect(() => {
     if (active) {
       const targetEle = eyeDropperRef.current.ownerDocument.querySelector(
@@ -244,7 +228,17 @@ export const EyeDropper = (props: Props) => {
           </button>
         </>
       )}
-      {isMagnifiedPicker && <Magnifier {...magnifierProps} />}
+      {isMagnifiedPicker && (
+        <Magnifier
+          active={active}
+          canvas={canvas}
+          zoom={zoom}
+          pixelateValue={pixelateValue}
+          magnifierSize={magnifierSize}
+          setColorCallback={setColorCallback}
+          target={target}
+        />
+      )}
     </div>
   );
 };
