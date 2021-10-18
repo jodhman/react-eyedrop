@@ -11,8 +11,8 @@ export const getSyncedPosition = (
   const x1 = magnifier.offsetLeft - left + size / 4 + zoom * 4
   const y1 = magnifier.offsetTop - top + size / 4 + zoom * 4
   const currentWindow = magnifier.ownerDocument.defaultView
-  const x2 = currentWindow.pageXOffset
-  const y2 = currentWindow.pageYOffset
+  const x2 = currentWindow.scrollX
+  const y2 = currentWindow.scrollY
   const left1 = -x1 * zoom - x2 * zoom
   const top1 = -y1 * zoom - y2 * zoom
 
