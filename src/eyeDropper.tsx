@@ -1,6 +1,4 @@
 import * as React from 'react';
-import * as _html2canvas from 'html2canvas';
-const html2canvas = _html2canvas as any as (element: HTMLElement, options?: Partial<_html2canvas.Options>) => Promise<HTMLCanvasElement>;
 import { useRef } from 'react';
 
 import { parseRGB } from './colorUtils/parseRgb';
@@ -10,7 +8,6 @@ import { validatePickRadius } from './validations/validatePickRadius';
 import { targetToCanvas } from './targetToCanvas';
 import { getColor } from './getColor';
 import { Magnifier } from './magnifier';
-import { hexToRgb } from './colorUtils/hexToRgb'
 
 const {
   useCallback,
@@ -57,13 +54,13 @@ type Props = {
 const initialStateColors = { rgb: '', hex: '' };
 
 export const EyeDropper = (props: Props) => {
-  const [colors, setColors] = useState(initialStateColors);
-  const [pickingColorFromDocument, setPickingColorFromDocument] = useState(false);
-  const [buttonDisabled, setButtonDisabled] = useState(false);
-  const [active, setActive] = useState(false);
-  const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null);
-  const eyeDropperRef = useRef(document.createElement('div'));
-  const target = useRef<TargetRef>({} as TargetRef);
+  const [colors, setColors] = useState(initialStateColors)
+  const [pickingColorFromDocument, setPickingColorFromDocument] = useState(false)
+  const [buttonDisabled, setButtonDisabled] = useState(false)
+  const [active, setActive] = useState(false)
+  const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null)
+  const eyeDropperRef = useRef(document.createElement('div'))
+  const target = useRef<TargetRef>({} as TargetRef)
   const {
     once = true,
     pickRadius = 0,
@@ -85,15 +82,15 @@ export const EyeDropper = (props: Props) => {
     magnifierSize = 150,
     zoom = 5,
     areaSelector = 'body',
-  } = props;
+  } = props
 
   const setPickingMode = useCallback(({ isPicking, disableButton, showActiveCursor }: PickingMode) => {
     if(document.body) {
-      document.body.style.cursor = showActiveCursor ? cursorActive : cursorInactive;
+      document.body.style.cursor = showActiveCursor ? cursorActive : cursorInactive
     }
-    setPickingColorFromDocument(isPicking);
-    setButtonDisabled(disableButton);
-  }, [cursorActive, cursorInactive]);
+    setPickingColorFromDocument(isPicking)
+    setButtonDisabled(disableButton)
+  }, [cursorActive, cursorInactive])
 
   const deactivateColorPicking = useCallback(
     () => {
@@ -102,102 +99,91 @@ export const EyeDropper = (props: Props) => {
         disableButton: false,
         showActiveCursor: false
       });
-      onPickEnd && onPickEnd();
+      onPickEnd && onPickEnd()
     }, [setPickingMode, onPickEnd]
-  );
+  )
 
   const exitPickByEscKey = useCallback((event: KeyboardEvent) => {
-    event.code === 'Escape' && pickingColorFromDocument && deactivateColorPicking();
-  }, [pickingColorFromDocument, deactivateColorPicking]);
+    event.code === 'Escape' && pickingColorFromDocument && deactivateColorPicking()
+  }, [pickingColorFromDocument, deactivateColorPicking])
 
   const pickColor = () => {
-    if (onPickStart) { onPickStart(); }
+    if (onPickStart) { onPickStart() }
 
     setPickingMode({
       isPicking: true,
       disableButton: disabled || true,
       showActiveCursor: true
-    });
-  };
+    })
+  }
 
   const activateMagnifier = () => {
-    setActive(!active);
-  };
-
-  const setColorCallback = (hex: any) => {
-    const rgbObj = hexToRgb(hex);
-    const rgb = rgbObj && parseRGB(rgbObj);
-
-    rgb && onChange({rgb, hex, customProps});
-    setActive(false);
-  };
+    setActive(!active)
+  }
 
   const updateColors = useCallback((rgbObj: RgbObj) => {
-    const rgb = parseRGB(rgbObj);
-    const hex = rgbToHex(rgbObj);
+    const rgb = parseRGB(rgbObj)
+    const hex = rgbToHex(rgbObj)
 
-    // set color object to parent handler
-    onChange({ rgb, hex, customProps });
-
-    setColors({ rgb, hex });
-  }, [customProps, onChange]);
+    onChange({ rgb, hex, customProps })
+    setColors({ rgb, hex })
+    setActive(false)
+  }, [customProps, onChange])
 
   const extractColor = useCallback(async (e: MouseEvent) => {
-    const { target } = e;
+    const { target } = e
 
-    const targetCanvas = target && await targetToCanvas(target);
-    const rgbColor = targetCanvas && getColor(pickRadius, targetCanvas, e);
+    const targetCanvas = target && await targetToCanvas(target)
+    const rgbColor = targetCanvas && getColor(pickRadius, targetCanvas, e)
 
-    rgbColor && updateColors(rgbColor);
-    once && deactivateColorPicking();
-  }, [deactivateColorPicking, once, pickRadius, updateColors]);
-
-  useEffect(() => {
-    onInit && onInit();
-  }, [onInit]);
+    rgbColor && updateColors(rgbColor)
+    once && deactivateColorPicking()
+  }, [deactivateColorPicking, once, pickRadius, updateColors])
 
   useEffect(() => {
-    pickRadius && validatePickRadius(pickRadius);
-  }, [pickRadius]);
+    onInit && onInit()
+  }, [onInit])
+
+  useEffect(() => {
+    pickRadius && validatePickRadius(pickRadius)
+  }, [pickRadius])
 
   // setup listener for canvas picking click
   useEffect(() => {
     if (pickingColorFromDocument) {
-      document.addEventListener('click', extractColor);
+      document.addEventListener('click', extractColor)
     }
     return () => {
-      document.removeEventListener('click', extractColor);
-    };
-  }, [pickingColorFromDocument, once, extractColor]);
+      document.removeEventListener('click', extractColor)
+    }
+  }, [pickingColorFromDocument, once, extractColor])
 
   // setup listener for the esc key
   useEffect(() => {
     if (pickingColorFromDocument) {
-      document.addEventListener('keydown', exitPickByEscKey);
+      document.addEventListener('keydown', exitPickByEscKey)
     }
     return () => {
-      document.removeEventListener('keydown', exitPickByEscKey);
-    };
-  }, [pickingColorFromDocument, exitPickByEscKey]);
+      document.removeEventListener('keydown', exitPickByEscKey)
+    }
+  }, [pickingColorFromDocument, exitPickByEscKey])
 
   useEffect(() => {
     if (active) {
       const targetEle = eyeDropperRef.current.ownerDocument.querySelector(
         areaSelector
-      ) as HTMLElement;
+      ) as HTMLElement
       if (targetEle) {
         target.current = {
           element: targetEle,
           rect: targetEle.getBoundingClientRect(),
-        };
+        }
+        targetToCanvas(targetEle).then(setCanvas)
       }
-      html2canvas(target.current.element).then((generatedCanvas: any) => {
-        setCanvas(generatedCanvas);
-      });
     }
-  }, [active]);
+  }, [active])
 
-  const shouldColorsPassThrough = colorsPassThrough ? { [colorsPassThrough]: colors } : {};
+  const shouldColorsPassThrough = colorsPassThrough ? { [colorsPassThrough]: colors } : {}
   return (
     <div style={styles.eyedropperWrapper} className={wrapperClasses} ref={eyeDropperRef}>
       {CustomComponent ? (
@@ -235,7 +221,7 @@ export const EyeDropper = (props: Props) => {
           zoom={zoom}
           pixelateValue={pixelateValue}
           magnifierSize={magnifierSize}
-          setColorCallback={setColorCallback}
+          setColorCallback={updateColors}
           target={target}
         />
       )}

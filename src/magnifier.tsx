@@ -1,6 +1,6 @@
-import React = require('react')
+import * as React from 'react'
 import { MutableRefObject, useEffect, useRef, useState } from 'react'
-import { TargetRef } from './types'
+import { RgbObj, TargetRef } from './types'
 
 import {
   DEFAULT_MAGNIFIER_SIZE,
@@ -28,7 +28,7 @@ interface EyeDropperProps {
 interface MagnifierProps extends EyeDropperProps {
   active: boolean;
   canvas: HTMLCanvasElement | null;
-  setColorCallback: any;
+  setColorCallback: (rgbObj: RgbObj) => void
   target: MutableRefObject<TargetRef>;
 }
 
@@ -146,15 +146,15 @@ export const Magnifier = (props: MagnifierProps) => {
     const { clientX, clientY } = e
 
     if (!isMouseMovingOut(e, target.current.rect)) {
-      const left1 = clientX - size / 2
-      const top1 = clientY - size / 2
+      const left = clientX - size / 2
+      const top = clientY - size / 2
       setMagnifierPos({
-        top: top1,
-        left: left1,
+        top,
+        left,
       })
       syncViewport()
     }
-  };
+  }
 
   const makeDraggable = () => {
     const dragHandler = magnifierRef.current
@@ -166,13 +166,13 @@ export const Magnifier = (props: MagnifierProps) => {
   }
 
   const getColorFromCanvas = (e: React.MouseEvent<HTMLDivElement>) => {
-    const hex = getColorFromMousePosition(
+    const rgbObj = getColorFromMousePosition(
       e,
       magnifierRef.current,
       target.current.rect,
       zoom
     )
-    setColorCallback(hex)
+    setColorCallback(rgbObj)
     setMagnifierPos({ ...initialPosition })
   }
 
