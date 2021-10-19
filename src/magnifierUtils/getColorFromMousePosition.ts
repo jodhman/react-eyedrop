@@ -1,9 +1,11 @@
-import { rgbToHex } from '../colorUtils/rgbToHex'
+import * as React from 'react'
+import * as getCanvasPixelColor from 'get-canvas-pixel-color'
+import { RgbObj } from '../types'
 
 export const getColorFromMousePosition = (
-  event: any,
-  magnifier: any,
-  targetRect: any,
+  event: React.MouseEvent<HTMLDivElement>,
+  magnifier: HTMLDivElement,
+  targetRect: DOMRect,
   zoom: number
 ) => {
   if (!targetRect) {
@@ -12,14 +14,9 @@ export const getColorFromMousePosition = (
   const { clientX, clientY } = event
   const { scrollX, scrollY } = magnifier.ownerDocument.defaultView
   const canvas = magnifier.querySelector('canvas')
-  const context = canvas && canvas.getContext('2d')
   const { left, top } = targetRect
   const x = (clientX + scrollX - left) * 2 - zoom
   const y = (clientY + scrollY - top) * 2 - zoom
-  const pixels = context && context.getImageData(x, y, 1, 1).data
-
-  return (
-    pixels &&
-    '#' + ('000000' + rgbToHex({ r: pixels[ 0 ], g: pixels[ 1 ], b: pixels[ 2 ] })).slice(-6)
-  )
+  const color: RgbObj = getCanvasPixelColor(canvas, x, y)
+  return color
 }

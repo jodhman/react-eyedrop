@@ -1,5 +1,3 @@
-import { MutableRefObject } from 'react';
-
 export type RgbObj = {
   r: number
   g: number
