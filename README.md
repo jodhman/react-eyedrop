@@ -280,6 +280,8 @@ npm run test
 
 ## Release History
 
+* 5.3.0
+  * Now handles any HTML element with background property
 * 5.2.1
   * Added `onPickEnd` property
 * 5.1.3
