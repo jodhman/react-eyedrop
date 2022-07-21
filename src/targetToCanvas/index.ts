@@ -12,7 +12,8 @@ export const targetToCanvas = (target: EventTarget): Promise<HTMLCanvasElement> 
   if(target instanceof HTMLImageElement) {
     return imageToCanvas(target)
   }
-  if(window.getComputedStyle(target).backgroundImage) {
+  const targetBackgroundImage = window.getComputedStyle(target).backgroundImage
+  if(targetBackgroundImage && targetBackgroundImage !== 'none') {
     return elementToCanvas(target)
   }
   return html2canvas(target, { logging: false })
