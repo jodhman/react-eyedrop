@@ -1,10 +1,13 @@
 import * as React from 'react';
+import { useRef } from 'react';
+
 import { parseRGB } from './colorUtils/parseRgb';
 import { rgbToHex } from './colorUtils/rgbToHex';
-import { OnChangeEyedrop, RgbObj, PickingMode } from './types';
+import { OnChangeEyedrop, RgbObj, PickingMode, TargetRef } from './types';
 import { validatePickRadius } from './validations/validatePickRadius';
-import { targetToCanvas } from './targetToCanvas'
-import { getColor } from './getColor'
+import { targetToCanvas } from './targetToCanvas';
+import { getColor } from './getColor';
+import { Magnifier } from './magnifier';
 
 const {
   useCallback,
@@ -40,15 +43,24 @@ type Props = {
   pickRadius?: number,
   disabled?: boolean,
   children?: React.ReactNode,
-  customProps?: { [key: string]: any }
+  customProps?: { [key: string]: any },
+  isMagnifiedPicker?: boolean
+  zoom?: number,
+  pixelateValue?: number,
+  magnifierSize?: number,
+  areaSelector?: string,
 }
 
 const initialStateColors = { rgb: '', hex: '' };
 
 export const EyeDropper = (props: Props) => {
-  const [colors, setColors] = useState(initialStateColors);
-  const [pickingColorFromDocument, setPickingColorFromDocument] = useState(false);
-  const [buttonDisabled, setButtonDisabled] = useState(false);
+  const [colors, setColors] = useState(initialStateColors)
+  const [pickingColorFromDocument, setPickingColorFromDocument] = useState(false)
+  const [buttonDisabled, setButtonDisabled] = useState(false)
+  const [active, setActive] = useState(false)
+  const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null)
+  const eyeDropperRef = useRef(document.createElement('div'))
+  const target = useRef<TargetRef>({} as TargetRef)
   const {
     once = true,
     pickRadius = 0,
@@ -65,15 +77,20 @@ export const EyeDropper = (props: Props) => {
     disabled,
     onPickStart,
     onPickEnd,
-  } = props;
+    isMagnifiedPicker = false,
+    pixelateValue = 6,
+    magnifierSize = 150,
+    zoom = 5,
+    areaSelector = 'body',
+  } = props
 
   const setPickingMode = useCallback(({ isPicking, disableButton, showActiveCursor }: PickingMode) => {
     if(document.body) {
-      document.body.style.cursor = showActiveCursor ? cursorActive : cursorInactive;
+      document.body.style.cursor = showActiveCursor ? cursorActive : cursorInactive
     }
-    setPickingColorFromDocument(isPicking);
-    setButtonDisabled(disableButton);
-  }, [cursorActive, cursorInactive]);
+    setPickingColorFromDocument(isPicking)
+    setButtonDisabled(disableButton)
+  }, [cursorActive, cursorInactive])
 
   const deactivateColorPicking = useCallback(
     () => {
@@ -81,79 +98,97 @@ export const EyeDropper = (props: Props) => {
         isPicking: false,
         disableButton: false,
         showActiveCursor: false
-      })
+      });
       onPickEnd && onPickEnd()
     }, [setPickingMode, onPickEnd]
-  );
+  )
 
   const exitPickByEscKey = useCallback((event: KeyboardEvent) => {
     event.code === 'Escape' && pickingColorFromDocument && deactivateColorPicking()
-  }, [pickingColorFromDocument, deactivateColorPicking]);
+  }, [pickingColorFromDocument, deactivateColorPicking])
 
   const pickColor = () => {
-    if (onPickStart) { onPickStart(); }
+    if (onPickStart) { onPickStart() }
 
     setPickingMode({
       isPicking: true,
       disableButton: disabled || true,
       showActiveCursor: true
-    });
-  };
+    })
+  }
+
+  const activateMagnifier = () => {
+    setActive(!active)
+  }
 
   const updateColors = useCallback((rgbObj: RgbObj) => {
-    const rgb = parseRGB(rgbObj);
-    const hex = rgbToHex(rgbObj);
+    const rgb = parseRGB(rgbObj)
+    const hex = rgbToHex(rgbObj)
 
-    // set color object to parent handler
-    onChange({ rgb, hex, customProps });
-
-    setColors({ rgb, hex });
-  }, [customProps, onChange]);
+    onChange({ rgb, hex, customProps })
+    setColors({ rgb, hex })
+    setActive(false)
+  }, [customProps, onChange])
 
   const extractColor = useCallback(async (e: MouseEvent) => {
-    const { target } = e;
+    const { target } = e
 
-    const targetCanvas = await targetToCanvas(target)
-    const rgbColor = getColor(pickRadius, targetCanvas, e)
+    const targetCanvas = target && await targetToCanvas(target)
+    const rgbColor = targetCanvas && getColor(pickRadius, targetCanvas, e)
 
-    updateColors(rgbColor)
-    once && deactivateColorPicking();
-  }, [deactivateColorPicking, once, pickRadius, updateColors]);
-
-  useEffect(() => {
-    onInit && onInit();
-  }, [onInit]);
+    rgbColor && updateColors(rgbColor)
+    once && deactivateColorPicking()
+  }, [deactivateColorPicking, once, pickRadius, updateColors])
 
   useEffect(() => {
-    pickRadius && validatePickRadius(pickRadius);
-  }, [pickRadius]);
+    onInit && onInit()
+  }, [onInit])
+
+  useEffect(() => {
+    pickRadius && validatePickRadius(pickRadius)
+  }, [pickRadius])
 
   // setup listener for canvas picking click
   useEffect(() => {
     if (pickingColorFromDocument) {
-      document.addEventListener('click', extractColor);
+      document.addEventListener('click', extractColor)
     }
     return () => {
-      document.removeEventListener('click', extractColor);
-    };
-  }, [pickingColorFromDocument, once, extractColor]);
+      document.removeEventListener('click', extractColor)
+    }
+  }, [pickingColorFromDocument, once, extractColor])
 
   // setup listener for the esc key
   useEffect(() => {
     if (pickingColorFromDocument) {
-      document.addEventListener('keydown', exitPickByEscKey);
+      document.addEventListener('keydown', exitPickByEscKey)
     }
     return () => {
-      document.removeEventListener('keydown', exitPickByEscKey);
-    };
-  }, [pickingColorFromDocument, exitPickByEscKey]);
+      document.removeEventListener('keydown', exitPickByEscKey)
+    }
+  }, [pickingColorFromDocument, exitPickByEscKey])
 
-  const shouldColorsPassThrough = colorsPassThrough ? { [colorsPassThrough]: colors } : {};
+  useEffect(() => {
+    if (active) {
+      const targetEle = eyeDropperRef.current.ownerDocument.querySelector(
+        areaSelector
+      ) as HTMLElement
+      if (targetEle) {
+        target.current = {
+          element: targetEle,
+          rect: targetEle.getBoundingClientRect(),
+        }
+        targetToCanvas(targetEle).then(setCanvas)
+      }
+    }
+  }, [active])
+
+  const shouldColorsPassThrough = colorsPassThrough ? { [colorsPassThrough]: colors } : {}
   return (
-    <div style={styles.eyedropperWrapper} className={wrapperClasses}>
+    <div style={styles.eyedropperWrapper} className={wrapperClasses} ref={eyeDropperRef}>
       {CustomComponent ? (
         <CustomComponent
-          onClick={pickColor}
+          onClick={isMagnifiedPicker ? activateMagnifier : pickColor}
           {...shouldColorsPassThrough}
           customProps={customProps}
           disabled={buttonDisabled}
@@ -172,12 +207,23 @@ export const EyeDropper = (props: Props) => {
           <button
             id={'react-eyedrop-button'}
             className={`react-eyedrop-button ${buttonClasses || ''}`}
-            onClick={pickColor}
+            onClick={isMagnifiedPicker ? activateMagnifier : pickColor}
             disabled={buttonDisabled}
           >
             {children}
           </button>
         </>
+      )}
+      {isMagnifiedPicker && (
+        <Magnifier
+          active={active}
+          canvas={canvas}
+          zoom={zoom}
+          pixelateValue={pixelateValue}
+          magnifierSize={magnifierSize}
+          setColorCallback={updateColors}
+          target={target}
+        />
       )}
     </div>
   );

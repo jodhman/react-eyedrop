@@ -18,7 +18,12 @@ export type HookOptions = {
 }
 
 export type PickingMode = {
-  isPicking: boolean,
-  disableButton: boolean,
+  isPicking: boolean
+  disableButton: boolean
   showActiveCursor: boolean
+}
+
+export type TargetRef = {
+  element: HTMLElement
+  rect: DOMRect
 }
