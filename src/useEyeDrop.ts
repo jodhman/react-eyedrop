@@ -43,8 +43,9 @@ export const useEyeDrop = ({
   const extractColor = useCallback(async (e: MouseEvent) => {
     const { target } = e;
 
+    if(!target) return
     const targetCanvas = await targetToCanvas(target)
-    const rgbColor = getColor(pickRadius, targetCanvas, e)
+    const rgbColor = getColor(targetCanvas, e, pickRadius)
 
     updateColors(rgbColor)
     once && setPickingColorFromDocument(false);
@@ -70,8 +71,8 @@ export const useEyeDrop = ({
   }, [pickingColorFromDocument, exitPickByEscKey]);
 
   useEffect(() => {
-    if(document.body) {
-      document.body.style.cursor = pickingColorFromDocument ? cursorActive : cursorInactive;
+    if(document.body && (cursorActive && cursorInactive)) {
+      document.body.style.cursor = pickingColorFromDocument ? cursorActive : cursorInactive
     }
   }, [pickingColorFromDocument, cursorActive, cursorInactive]);
 

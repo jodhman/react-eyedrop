@@ -111,10 +111,11 @@ export const EyeDropper = (props: Props) => {
   }, [customProps, onChange]);
 
   const extractColor = useCallback(async (e: MouseEvent) => {
-    const { target } = e;
+    const { target } = e
 
+    if(!target) return
     const targetCanvas = await targetToCanvas(target)
-    const rgbColor = getColor(pickRadius, targetCanvas, e)
+    const rgbColor = getColor(targetCanvas, e, pickRadius)
 
     updateColors(rgbColor)
     once && deactivateColorPicking();
