@@ -149,6 +149,14 @@ export const EyeDropper = (props: Props) => {
     };
   }, [pickingColorFromDocument, exitPickByEscKey]);
 
+  useEffect(() => {
+    return () => {
+      if(document.body) {
+        document.body.style.cursor = cursorInactive
+      }
+    }
+  }, [])
+
   const shouldColorsPassThrough = colorsPassThrough ? { [colorsPassThrough]: colors } : {};
   return (
     <div style={styles.eyedropperWrapper} className={wrapperClasses}>
