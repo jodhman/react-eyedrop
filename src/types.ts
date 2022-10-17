@@ -15,6 +15,9 @@ export type HookOptions = {
   pickRadius?: number
   cursorActive?: string
   cursorInactive?: string
+  onPickStart?: () => void
+  onPickEnd?: () => void
+  onPickCancel?: () => void
 }
 
 export type PickingMode = {

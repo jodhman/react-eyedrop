@@ -259,7 +259,10 @@ const [colors, pickColor, cancelPickColor] = useEyeDrop({
   once: boolean,
   pickRadius: number,
   cursorActive: CSS Cursors,
-  cursorInactive: CSS Cursors
+  cursorInactive: CSS Cursors,
+  onPickStart?: () => void
+  onPickEnd?: () => void
+  onPickCancel?: () => void
 })
 ```
 **[Link to CSS Cursors](https://www.w3schools.com/csSref/pr_class_cursor.asp)**
@@ -280,6 +283,8 @@ npm run test
 
 ## Release History
 
+* 5.4.1
+  * Added onPickStart, onPickEnd and onPickCancel to hook
 * 5.3.0
   * Now handles any HTML element with background property
 * 5.2.1

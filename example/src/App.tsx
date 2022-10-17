@@ -2,7 +2,7 @@ import * as React from 'react'
 import { hot } from 'react-hot-loader'
 
 import './App.css'
-import { EyeDropper, OnChangeEyedrop, useEyeDrop } from './package'
+import { EyeDropper, OnChangeEyedrop, useEyeDrop } from 'react-eyedrop'
 import { ChangeEvent, useEffect } from 'react'
 const { useState } = React
 
@@ -35,7 +35,7 @@ const App = () => {
 
   const handleImage = (e: ChangeEvent<HTMLInputElement>) => {
     if(!e.currentTarget.files) return
-    const image = e.currentTarget.files[0]
+    const image = (e.currentTarget.files as FileList)[0]
 
     if (image.type && image.type.includes('image')) {
       setState({ ...state, image })
@@ -45,7 +45,7 @@ const App = () => {
   const renderImage = () => (
     <div className="uploaded-image-wrapper">
       <img
-        src={URL.createObjectURL(state.image)} />
+        src={URL.createObjectURL(state.image as File)} />
     </div>
   )
 
