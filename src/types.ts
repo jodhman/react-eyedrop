@@ -18,6 +18,7 @@ export type HookOptions = {
   onPickStart?: () => void
   onPickEnd?: () => void
   onPickCancel?: () => void
+  onChange?: (changes: OnChangeEyedrop) => void
 }
 
 export type PickingMode = {

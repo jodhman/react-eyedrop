@@ -19,12 +19,10 @@ export const calcAverageColor = (colorBlock: Array<RgbObj>): RgbObj => {
     return colorBlock[0];
   }
 
-  const rgbAverage = colorBlock.reduce((rgbAcc, colorsObj) => {
-    rgbAcc[0] += Math.round(colorsObj.r / totalPixels);
-    rgbAcc[1] += Math.round(colorsObj.g / totalPixels);
-    rgbAcc[2] += Math.round(colorsObj.b / totalPixels);
-    return rgbAcc;
-  }, [0, 0, 0]);
+  const rgbPrimary = colorBlock
+    .map(ar => JSON.stringify(ar))
+    .filter((itm, idx, arr) => arr.indexOf(itm) === idx)
+    .map(str => JSON.parse(str))
 
-  return { r: rgbAverage[0], g: rgbAverage[1], b: rgbAverage[2] };
+  return { r: rgbPrimary[0][0], g: rgbPrimary[0][1], b: rgbPrimary[0][2] }
 };
