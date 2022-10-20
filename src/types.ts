@@ -15,11 +15,10 @@ export type HookOptions = {
   pickRadius?: number
   cursorActive?: string
   cursorInactive?: string
-  customProps?: { [key: string]: any }
   onPickStart?: () => void
   onPickEnd?: () => void
   onPickCancel?: () => void
-  onChange?: (changes: OnChangeEyedrop) => void  
+  onChange?: (changes: OnChangeEyedrop) => void
 }
 
 export type PickingMode = {
