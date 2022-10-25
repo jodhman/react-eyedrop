@@ -283,6 +283,9 @@ npm run test
 
 ## Release History
 
+* 5.4.2
+  * Fixed bug with color picking HTML elements
+  * Now functions with React 18
 * 5.4.1
   * Added onPickStart, onPickEnd and onPickCancel to hook
 * 5.3.0
