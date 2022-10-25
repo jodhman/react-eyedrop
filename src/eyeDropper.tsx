@@ -71,8 +71,10 @@ export const EyeDropper = (props: Props) => {
     if(document.body) {
       document.body.style.cursor = showActiveCursor ? cursorActive : cursorInactive;
     }
-    setPickingColorFromDocument(isPicking);
     setButtonDisabled(disableButton);
+    window.setTimeout(() => {
+      setPickingColorFromDocument(isPicking);
+    }, 250)
   }, [cursorActive, cursorInactive]);
 
   const deactivateColorPicking = useCallback(

@@ -17,9 +17,11 @@ export const useEyeDrop = ({
   pickRadius,
   cursorActive = 'copy',
   cursorInactive = 'auto',
+  customProps,
   onPickStart,
   onPickEnd,
   onPickCancel,
+  onChange,
 }: HookOptions = {}): ReturnValue => {
   const [colors, setColors] = useState(initialStateColors);
   const [pickingColorFromDocument, setPickingColorFromDocument] = useState(false);
@@ -54,10 +56,18 @@ export const useEyeDrop = ({
     const targetCanvas = await targetToCanvas(target)
     const rgbColor = getColor(targetCanvas, e, pickRadius)
 
+    if (onChange) {
+      const rgb = parseRGB(rgbColor)
+      const hex = rgbToHex(rgbColor)
+
+      // set color object to parent handler
+      onChange({ rgb, hex, customProps })
+    }
+
     updateColors(rgbColor)
     once && setPickingColorFromDocument(false);
     if (onPickEnd) { onPickEnd() }
-  }, [ once, setPickingColorFromDocument ]);
+  }, [ customProps, once, setPickingColorFromDocument ]);
 
   useEffect(() => {
     if (pickingColorFromDocument) {
