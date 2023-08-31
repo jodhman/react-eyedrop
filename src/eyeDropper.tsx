@@ -117,6 +117,8 @@ export const EyeDropper = (props: Props) => {
 
     if(!target) return
 
+    // Prevent memory leak problem
+    document.removeEventListener('click', extractColor);
 
     const {targetCanvas, targetPickXOffset, targetPickYOffset} = await targetToCanvas(target as HTMLElement)
     const rgbColor = getColor(

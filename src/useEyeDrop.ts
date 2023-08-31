@@ -53,6 +53,10 @@ export const useEyeDrop = ({
     const { target } = e;
 
     if(!target) return
+
+    // Prevent memory leak problem
+    document.removeEventListener('click', extractColor);
+
     const { targetCanvas } = await targetToCanvas(target as HTMLElement)
     const rgbColor = getColor(targetCanvas, e.offsetX, e.offsetY, pickRadius)
 
