@@ -53,8 +53,8 @@ export const useEyeDrop = ({
     const { target } = e;
 
     if(!target) return
-    const targetCanvas = await targetToCanvas(target)
-    const rgbColor = getColor(targetCanvas, e, pickRadius)
+    const { targetCanvas } = await targetToCanvas(target as HTMLElement)
+    const rgbColor = getColor(targetCanvas, e.offsetX, e.offsetY, pickRadius)
 
     if (onChange) {
       const rgb = parseRGB(rgbColor)

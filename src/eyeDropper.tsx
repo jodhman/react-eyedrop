@@ -116,9 +116,15 @@ export const EyeDropper = (props: Props) => {
     const { target } = e
 
     if(!target) return
-    const targetCanvas = await targetToCanvas(target)
-    const rgbColor: RgbObj = getColor(targetCanvas, e, pickRadius)
 
+
+    const {targetCanvas, targetPickXOffset, targetPickYOffset} = await targetToCanvas(target as HTMLElement)
+    const rgbColor = getColor(
+      targetCanvas,
+      e.offsetX + targetPickXOffset,
+      e.offsetY + targetPickYOffset,
+      pickRadius
+    )
     updateColors(rgbColor)
     once && deactivateColorPicking();
   }, [deactivateColorPicking, once, pickRadius, updateColors]);
