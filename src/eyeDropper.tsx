@@ -33,6 +33,7 @@ type Props = {
   once?: boolean,
   cursorActive?: string,
   cursorInactive?: string,
+  cursorAwait?: string,
   onInit?: () => void,
   onPickStart?: () => void,
   onPickEnd?: () => void,
@@ -55,6 +56,7 @@ export const EyeDropper = (props: Props) => {
     onInit,
     cursorActive = 'copy',
     cursorInactive = 'auto',
+    cursorAwait = 'wait',
     onChange,
     wrapperClasses,
     buttonClasses,
@@ -120,6 +122,11 @@ export const EyeDropper = (props: Props) => {
     // Prevent memory leak problem
     document.removeEventListener('click', extractColor);
 
+    // Cursor change to loading when start extracting if set to falsy value it will not change cursor to loading
+    if(document.body && cursorAwait) {
+      document.body.style.cursor = cursorAwait;
+    }
+
     const {targetCanvas, targetPickXOffset, targetPickYOffset} = await targetToCanvas(target as HTMLElement)
     const rgbColor = getColor(
       targetCanvas,
@@ -128,6 +135,11 @@ export const EyeDropper = (props: Props) => {
       pickRadius
     )
     updateColors(rgbColor)
+
+    if(document.body) {
+      document.body.style.cursor = cursorInactive;
+    }
+
     once && deactivateColorPicking();
   }, [deactivateColorPicking, once, pickRadius, updateColors]);
 

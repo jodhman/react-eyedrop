@@ -17,6 +17,7 @@ export const useEyeDrop = ({
   pickRadius,
   cursorActive = 'copy',
   cursorInactive = 'auto',
+  cursorAwait = 'wait',
   customProps,
   onPickStart,
   onPickEnd,
@@ -57,6 +58,11 @@ export const useEyeDrop = ({
     // Prevent memory leak problem
     document.removeEventListener('click', extractColor);
 
+    // Cursor change to loading when start extracting if set to falsy value it will not change cursor to loading
+    if(document.body && cursorAwait) {
+      document.body.style.cursor = cursorAwait;
+    }
+
     const { targetCanvas } = await targetToCanvas(target as HTMLElement)
     const rgbColor = getColor(targetCanvas, e.offsetX, e.offsetY, pickRadius)
 
@@ -69,6 +75,11 @@ export const useEyeDrop = ({
     }
 
     updateColors(rgbColor)
+
+    if(document.body) {
+      document.body.style.cursor = cursorInactive;
+    }
+
     once && setPickingColorFromDocument(false);
     if (onPickEnd) { onPickEnd() }
   }, [ customProps, once, setPickingColorFromDocument ]);
