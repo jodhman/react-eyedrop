@@ -37,6 +37,7 @@ type Props = {
   onInit?: () => void,
   onPickStart?: () => void,
   onPickEnd?: () => void,
+  onExtractColor?: () => void,
   colorsPassThrough?: string,
   pickRadius?: number,
   disabled?: boolean,
@@ -67,6 +68,7 @@ export const EyeDropper = (props: Props) => {
     disabled,
     onPickStart,
     onPickEnd,
+    onExtractColor,
   } = props;
 
   const setPickingMode = useCallback(({ isPicking, disableButton, showActiveCursor }: PickingMode) => {
@@ -126,6 +128,9 @@ export const EyeDropper = (props: Props) => {
     if(document.body && cursorAwait) {
       document.body.style.cursor = cursorAwait;
     }
+
+    // Add onextract callback for awaiting rendering purpose
+    if (onExtractColor) { onExtractColor(); }
 
     const {targetCanvas, targetPickXOffset, targetPickYOffset} = await targetToCanvas(target as HTMLElement)
     const rgbColor = getColor(

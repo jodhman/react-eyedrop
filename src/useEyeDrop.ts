@@ -22,6 +22,7 @@ export const useEyeDrop = ({
   onPickStart,
   onPickEnd,
   onPickCancel,
+  onExtractColor,
   onChange,
 }: HookOptions = {}): ReturnValue => {
   const [colors, setColors] = useState(initialStateColors);
@@ -62,6 +63,9 @@ export const useEyeDrop = ({
     if(document.body && cursorAwait) {
       document.body.style.cursor = cursorAwait;
     }
+
+    // Add onextract callback for awaiting rendering purpose
+    if (onExtractColor) { onExtractColor(); }
 
     const { targetCanvas } = await targetToCanvas(target as HTMLElement)
     const rgbColor = getColor(targetCanvas, e.offsetX, e.offsetY, pickRadius)

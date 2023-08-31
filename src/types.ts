@@ -19,6 +19,7 @@ export type HookOptions = {
   customProps?: { [key: string]: any }
   onPickStart?: () => void
   onPickEnd?: () => void
+  onExtractColor?: () => void,
   onPickCancel?: () => void
   onChange?: (changes: OnChangeEyedrop) => void  
 }
