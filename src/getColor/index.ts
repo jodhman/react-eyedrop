@@ -1,8 +1,9 @@
 import * as getCanvasPixelColor from 'get-canvas-pixel-color'
 import { extractColors } from './extractColors'
 import { calcAverageColor } from './calcAverageColor'
+import { RgbObj } from 'types';
 
-export const getColor = (targetCanvas: HTMLCanvasElement, e: MouseEvent, pickRadius?: number) => {
+export const getColor = (targetCanvas: HTMLCanvasElement, e: MouseEvent, pickRadius?: number): RgbObj => {
   const { offsetX, offsetY } = e;
   if (pickRadius === undefined || pickRadius === 0) {
     return getCanvasPixelColor(targetCanvas, offsetX, offsetY);
