@@ -15,9 +15,11 @@ export type HookOptions = {
   pickRadius?: number
   cursorActive?: string
   cursorInactive?: string
+  cursorAwait?: string,
   customProps?: { [key: string]: any }
   onPickStart?: () => void
   onPickEnd?: () => void
+  onExtractColor?: () => void,
   onPickCancel?: () => void
   onChange?: (changes: OnChangeEyedrop) => void  
 }

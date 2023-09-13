@@ -17,10 +17,12 @@ export const useEyeDrop = ({
   pickRadius,
   cursorActive = 'copy',
   cursorInactive = 'auto',
+  cursorAwait = 'wait',
   customProps,
   onPickStart,
   onPickEnd,
   onPickCancel,
+  onExtractColor,
   onChange,
 }: HookOptions = {}): ReturnValue => {
   const [colors, setColors] = useState(initialStateColors);
@@ -53,8 +55,25 @@ export const useEyeDrop = ({
     const { target } = e;
 
     if(!target) return
-    const targetCanvas = await targetToCanvas(target)
-    const rgbColor = getColor(targetCanvas, e, pickRadius)
+
+    // Prevent memory leak problem
+    document.removeEventListener('click', extractColor);
+
+    // Cursor change to loading when start extracting if set to falsy value it will not change cursor to loading
+    if(document.body && cursorAwait) {
+      document.body.style.cursor = cursorAwait;
+    }
+
+    // Add onextract callback for awaiting rendering purpose
+    if (onExtractColor) { onExtractColor(); }
+
+    const {targetCanvas, targetPickXOffset, targetPickYOffset} = await targetToCanvas(target as HTMLElement)
+    const rgbColor = getColor(
+      targetCanvas,
+      e.offsetX + targetPickXOffset,
+      e.offsetY + targetPickYOffset,
+      pickRadius
+    )
 
     if (onChange) {
       const rgb = parseRGB(rgbColor)
@@ -65,6 +84,11 @@ export const useEyeDrop = ({
     }
 
     updateColors(rgbColor)
+
+    if(document.body) {
+      document.body.style.cursor = cursorInactive;
+    }
+
     once && setPickingColorFromDocument(false);
     if (onPickEnd) { onPickEnd() }
   }, [ customProps, once, setPickingColorFromDocument ]);

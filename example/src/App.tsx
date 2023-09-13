@@ -4,10 +4,13 @@ import { hot } from 'react-hot-loader'
 import './App.css'
 import { EyeDropper, OnChangeEyedrop, useEyeDrop } from 'react-eyedrop'
 import { ChangeEvent, useEffect } from 'react'
+import ManyDom from './ManyDom'
+import SvgElement from './SvgElement'
+import GradientBg from './GradientBg'
 const { useState } = React
 
 type StateType = {
-  image: File | null,
+  image: File | string | null,
   pickedColor: {
     rgb: string,
     hex: string
@@ -42,12 +45,22 @@ const App = () => {
     }
   }
 
-  const renderImage = () => (
-    <div className="uploaded-image-wrapper">
-      <img
-        src={URL.createObjectURL(state.image as File)} />
+  const handleUseLocalImage = () => {
+    setState({...state, image: '/logo512.png'})
+  }
+
+  const renderImage = () => {
+    let imageSource = '';
+    if (typeof image === 'string') {
+      imageSource = image;
+    } else {
+      imageSource = URL.createObjectURL(state.image as File);
+    }
+
+    return <div className="uploaded-image-wrapper">
+      <img src={imageSource} />
     </div>
-  )
+  }
 
   const toggleOnce = () => {
     setState({ ...state, eyedropOnce: !state.eyedropOnce })
@@ -78,10 +91,22 @@ const App = () => {
           renderImage()
         ) : (
           <div className="image-upload-wrapper">
-            <h1>Click to upload image!</h1>
-            <input className="image-upload-field" type="file" onChange={handleImage} />
+            <div>
+              <div className="image-upload-btn-wrapper" onClick={handleUseLocalImage}>
+                <h1>Click to use local image</h1>
+              </div>
+              <div className="image-upload-btn-wrapper">
+                <h1>Click to upload image!</h1>
+                <input className="image-upload-field" type="file" onChange={handleImage} />
+              </div>
+            </div>
           </div>
         )}
+        <div className="sample-elm-wrapper">
+          {image && <SvgElement />}
+          {image && <GradientBg />}
+          {image && <ManyDom />}
+        </div>
       </div>
     </div>
   )

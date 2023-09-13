@@ -30,10 +30,14 @@ export const getCanvasBlockColors = (
     validatedExtractionValues.targetHeight
   ).data;
 
-  const colorBlock = [];
+  const colorBlock: Array<RgbObj> = [];
   for (let i = 0; i < imageData.length; i += 4) {
     const color = imageData.slice(i, i + 4);
-    colorBlock.push([color[0], color[1], color[2]])
+    colorBlock.push({
+      r: color[0],
+      g: color[1],
+      b: color[2]
+    });
   }
   return colorBlock;
 };
