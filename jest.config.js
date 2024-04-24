@@ -22,5 +22,5 @@ module.exports = {
     'ts',
     'tsx'
   ],
-  testMatch: [path.join(__dirname, 'tests/**/?(*.)+(spec|test).ts?(x)')],
+  testMatch: [path.join(__dirname, 'tests/**/*.(spec|test).ts?(x)')],
 };
